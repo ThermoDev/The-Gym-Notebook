@@ -17,6 +17,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:maxWidth="80dp"
+        android:minWidth="80dp"
         android:text="Exercise Name"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"

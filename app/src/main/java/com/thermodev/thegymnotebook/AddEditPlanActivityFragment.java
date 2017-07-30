@@ -1,15 +1,19 @@
 package com.thermodev.thegymnotebook;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -62,18 +66,64 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                 //Initializes count variable and if it's not null, we get the count from adapter, otherwise we set it to 0
                 int currentCount = (listView.getAdapter() != null) ? listView.getAdapter().getCount() : 0;
 
-                myArrayString.add("Sets: ");
+//                myArrayString.add("Sets: ");
 
-                //Turns the array into the ArrayString
-                String[] myArray = myArrayString.toArray(new String[0]);
-                //Builds the String array list using the created array
-                myArrayString = new ArrayList<String>(Arrays.asList(myArray));
-                //The adapter is created using previous arrays
-                myAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, R.id.plan_list_sets, myArrayString);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Exercise Name: ");
 
-                //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
-                listView.setAdapter(myAdapter);
-                Log.d(TAG, "onClick: " + listView.getAdapter().getCount());
+                // Set up the input
+                final EditText input = new EditText(getContext());
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // If we currently have a usable adapter
+                        if(myAdapter != null){
+                            myAdapter.add(input.getText().toString());
+                        }else { // Else, Create a new adapter
+                            //Adds the input to the array
+                            myArrayString.add(input.getText().toString());
+
+                            //Turns the array into the ArrayList
+                            String[] myArray = myArrayString.toArray(new String[0]);
+
+                            //Builds the String array list using the created array
+                            myArrayString = new ArrayList<>(Arrays.asList(myArray));
+
+                            //The adapter is created using previous arrays
+                            myAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, R.id.plan_list_add_edit_exercise, myArrayString);
+                            //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
+                            listView.setAdapter(myAdapter);
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+//                Log.d(TAG, "onClick: " + listView.getAdapter().getCount());
+            }
+        });
+
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i = 0; i < myAdapter.getCount(); i++){
+//                    Log.d(TAG, "onClick: " + myAdapter.getItem(i));
+                    Log.d(TAG, "onClick: " +myAdapter.getExerciseList().get(i).getName()
+                            + " : " + myAdapter.getExerciseList().get(i).getSets()
+                            + "/" + myAdapter.getExerciseList().get(i).getReps());
+                }
             }
         });
 
