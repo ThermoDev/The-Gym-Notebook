@@ -11,6 +11,8 @@ public class Exercise {
 
     public Exercise(String name) {
         this.name = name;
+        this.sets = 0;
+        this.reps = 0;
     }
 
     public String getName() {
