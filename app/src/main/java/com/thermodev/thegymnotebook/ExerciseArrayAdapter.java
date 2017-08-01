@@ -29,7 +29,7 @@ public class ExerciseArrayAdapter extends ArrayAdapter<String> {
     private Button button;
     private Context context;
     private int layoutResourceId;
-    private List<Exercise> exerciseList;
+    private static List<Exercise> exerciseList;
 
 
     public List<Exercise> getExerciseList() {

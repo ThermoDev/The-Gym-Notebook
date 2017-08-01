@@ -28,8 +28,13 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
     private Button addWorkoutButton;
     private Button saveButton;
     private ListView listView;
+    private EditText nameText;
+    private EditText descriptionText;
     static ArrayList<Exercise> exerciseList;
     private ExerciseArrayAdapter myAdapter;
+
+    //TODO: Remove tempWorkoutPlans
+    public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
 
 //    private CursorRecyclerViewAdapter mAdapter; // Add Adapter Reference
 
@@ -55,7 +60,8 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
         addWorkoutButton = (Button) view.findViewById(R.id.plan_add_edit_exercise);
         saveButton = (Button) view.findViewById(R.id.plan_add_edit_save);
         listView = (ListView) view.findViewById(R.id.plan_add_edit_list_view);
-
+        nameText = (EditText) view.findViewById(R.id.plan_add_edit_name);
+        descriptionText = (EditText) view.findViewById(R.id.plan_add_edit_description);
         exerciseList = new ArrayList<>();
 
         //Listener for adding a workout
@@ -119,12 +125,21 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                             + " : " + exerciseList.get(i).getSets()
                             + "/" + exerciseList.get(i).getReps());
                 }
+                WorkoutPlan workoutPlan = new WorkoutPlan(nameText.getText().toString());
+                if(!descriptionText.equals(null)){
+                    workoutPlan.setDescription(descriptionText.getText().toString());
+                }
+                tempWorkoutPlans.add(workoutPlan);
+                getActivity().finish();
+
             }
         });
 
         return view;
 
     }
+
+
 
 }
 

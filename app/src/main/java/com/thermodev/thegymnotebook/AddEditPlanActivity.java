@@ -2,11 +2,8 @@ package com.thermodev.thegymnotebook;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
 
 /**
  * Created by user on 26-Jul-17.
@@ -14,8 +11,6 @@ import android.widget.ListView;
 
 public class AddEditPlanActivity extends AppCompatActivity implements AddEditPlanActivityFragment.OnSaveClicked{
     private static final String TAG = "AddEditPlanActivity";
-
-    ListView lv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,9 +27,7 @@ public class AddEditPlanActivity extends AppCompatActivity implements AddEditPla
 //        arguments.putSerializable(Task.class.getSimpleName(), task);
         fragment.setArguments(arguments);
 
-        lv = (ListView) findViewById(R.id.plan_add_edit_list_view);
-//
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Log.d(TAG, "onItemClick: help!");
@@ -43,11 +36,7 @@ public class AddEditPlanActivity extends AppCompatActivity implements AddEditPla
 //        Log.d(TAG, "onCreate: Wha");
 //
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment, fragment); // Use replace instead of Add. Doesn't require any text to replace it.
-        fragmentTransaction.commit();
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, fragment).commit();
     }
 
     @Override

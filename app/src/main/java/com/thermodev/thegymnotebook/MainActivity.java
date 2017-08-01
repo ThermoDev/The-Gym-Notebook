@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +35,22 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-       switch(id) {
-           case R.id.action_add_workout:
-               workoutEditRequest(null);
-       }
+        switch (id) {
+            case R.id.action_add_workout_plan:
+                planAddEditRequest(null);
+                break;
+            case R.id.action_add_workout:
+                workoutAddEditRequest();
+                break;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void workoutEditRequest(Workout workout) {
+    private void planAddEditRequest(Workout workout) {
         Log.d(TAG, "taskEditRequest - Starts");
         {
-            Log.d(TAG, "taskEditRequest: In Single-Pane Mode (PHONE) ");
-            // In Single-Pane mode, starts the detail activity for the selected Item Id.sqlite
+            // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditPlanActivity.class);
             if (workout != null) {
                 detailIntent.putExtra(Workout.class.getSimpleName(), workout);
@@ -57,5 +61,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    private void workoutAddEditRequest() {
+        Log.d(TAG, "taskEditRequest - Starts");
+        {
+            // Starts the detail activity for the selected Item
+            Intent detailIntent = new Intent(this, AddEditWorkoutActivity.class);
+            startActivity(detailIntent);
+
+        }
+    }
+
 
 }

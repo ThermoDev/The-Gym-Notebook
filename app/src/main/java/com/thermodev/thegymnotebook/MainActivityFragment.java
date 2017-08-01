@@ -20,7 +20,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView - Starts");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.task_list);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workout_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
     }

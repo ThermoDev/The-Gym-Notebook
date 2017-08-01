@@ -22,6 +22,16 @@
 
         <activity
             android:name=".AddEditPlanActivity"
+            android:label="@string/title_activity_plan_add_edit"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thermodev.thegymnotebook.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".AddEditWorkoutActivity"
             android:label="@string/title_activity_add_edit"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

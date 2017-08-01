@@ -65,18 +65,19 @@
         android:id="@+id/plan_add_edit_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:drawableLeft="@android:drawable/ic_menu_save"
         android:drawableStart="@android:drawable/ic_menu_save"
+        android:elevation="0dp"
         android:text="@string/addedit_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         tools:layout_conversion_absoluteHeight="0dp"
         tools:layout_conversion_absoluteWidth="91dp"
         tools:layout_conversion_absoluteX="0dp"
-        tools:layout_conversion_absoluteY="463dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp"/>
+        tools:layout_conversion_absoluteY="463dp"/>
 
     <ListView
         android:id="@+id/plan_add_edit_list_view"
