@@ -5,15 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.ListView;
 
 /**
  * Created by user on 26-Jul-17.
  */
 
 public class AddEditWorkoutActivity extends AppCompatActivity {
-    private ListView listView;
 //    private Button addWorkoutButton;
+    private ExerciseArrayAdapter mExerciseArrayAdapter;
+
 
     private static final String TAG = "AddEditWorkoutActivity";
 
@@ -25,6 +25,7 @@ public class AddEditWorkoutActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         AddEditWorkoutActivityFragment fragment = new AddEditWorkoutActivityFragment();
@@ -42,4 +43,6 @@ public class AddEditWorkoutActivity extends AppCompatActivity {
 //        });
         Log.d(TAG, "onCreate: Wha");
     }
+
+
 }

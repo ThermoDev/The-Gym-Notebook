@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
             // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditWorkoutActivity.class);
             startActivity(detailIntent);
-
         }
     }
 

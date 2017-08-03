@@ -33,7 +33,7 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
     static ArrayList<Exercise> exerciseList;
     private ExerciseArrayAdapter myAdapter;
 
-    //TODO: Remove tempWorkoutPlans
+    //TODO: Remove tempWorkoutPlans after a database is implemented.
     public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
 
 //    private CursorRecyclerViewAdapter mAdapter; // Add Adapter Reference
@@ -120,16 +120,25 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
 //                Log.d(TAG, "onClick: " + myAdapter.getCount());
 //                Log.d(TAG, "onClick: " + exerciseList.size());
 
+                WorkoutPlan workoutPlan = new WorkoutPlan(nameText.getText().toString());
                 for(int i = 0; i < exerciseList.size(); i++){
                     Log.d(TAG, "onClick: " + exerciseList.get(i).getName()
                             + " : " + exerciseList.get(i).getSets()
                             + "/" + exerciseList.get(i).getReps());
                 }
-                WorkoutPlan workoutPlan = new WorkoutPlan(nameText.getText().toString());
                 if(!descriptionText.equals(null)){
                     workoutPlan.setDescription(descriptionText.getText().toString());
                 }
+                workoutPlan.setExercises(exerciseList);
+
                 tempWorkoutPlans.add(workoutPlan);
+                for(WorkoutPlan plan : tempWorkoutPlans){
+                    Log.d(TAG, "onClick: Workout Plan " + plan.getName());
+                    for(Exercise exercise : plan.getExercises()){
+                        Log.d(TAG, "onClick: " + exercise.getName());
+                    }
+
+                }
                 getActivity().finish();
 
             }

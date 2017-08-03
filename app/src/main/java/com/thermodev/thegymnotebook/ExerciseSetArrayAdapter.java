@@ -25,18 +25,15 @@ import static android.content.ContentValues.TAG;
  * Created by Thermodev on 27-Jul-17.
  */
 
-public class ExerciseArrayAdapter extends ArrayAdapter<String> {
+public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
+    private Button button;
     private Context context;
     private int layoutResourceId;
     private final LayoutInflater layoutInflater;
     private static List<Exercise> exerciseList;
 
 
-    public List<Exercise> getExerciseList() {
-        return exerciseList;
-    }
-
-    public ExerciseArrayAdapter(Context context, int resource, int textViewResourceId, List<Exercise> exerciseList) {
+    public ExerciseSetArrayAdapter(Context context, int resource, int textViewResourceId, List<Exercise> exerciseList) {
         super(context, resource, textViewResourceId);
         this.context = context;
         this.layoutResourceId = resource;
@@ -54,20 +51,31 @@ public class ExerciseArrayAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup parent) {
         View row = convertView;
-        if (row == null) {
+        final ViewHolder viewHolder;
+        if(row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
+            viewHolder = new ViewHolder(row);
+            row.setTag(viewHolder);
             Exercise exercise = new Exercise(getItem(position));
             exerciseList.add(exercise);
-        } else {
-            //TODO: Implement Else
+            Log.d(TAG, "getView - getItem: " + getItem(position));
+        }else{
+            viewHolder = (ViewHolder) row.getTag();
         }
-
 
         TextView exerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
         exerciseName.setText(getItem(position));
 
         Exercise currentExercise = exerciseList.get(position);
+        if(currentExercise.getReps() != 0){
+            String string = currentExercise.getReps() + "";
+            viewHolder.etReps.setText(string);
+        }
+        if(currentExercise.getSets() != 0){
+            String string = currentExercise.getSets() + "";
+            viewHolder.etSets.setText(string);
+        }
 
 
         EditText setsEdit = (EditText) row.findViewById(R.id.plan_list_sets_edit_text);
@@ -176,4 +184,16 @@ public class ExerciseArrayAdapter extends ArrayAdapter<String> {
         return super.getItem(position);
     }
 
- }
+
+    private class ViewHolder{
+        final TextView tvName;
+        final EditText etReps;
+        final EditText etSets;
+
+        public ViewHolder(View v) {
+            this.tvName = (TextView) v.findViewById(R.id.plan_list_add_edit_exercise);
+            this.etReps = (EditText) v.findViewById(R.id.plan_list_reps_edit_text);
+            this.etSets = (EditText) v.findViewById(R.id.plan_list_sets_edit_text);
+        }
+    }
+}
