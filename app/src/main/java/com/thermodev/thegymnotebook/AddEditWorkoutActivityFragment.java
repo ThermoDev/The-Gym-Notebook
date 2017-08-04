@@ -3,6 +3,7 @@ package com.thermodev.thegymnotebook;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -112,6 +113,15 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
                     for (WorkoutPlan tempPlan : tempWorkoutPlans) {
                         planList.add(tempPlan.getName());
                     }
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(R.string.no_plans_found)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // FIRE ZE MISSILES!
+                                }
+                            }).show();
+                    return false;
                 }
                 String plans[] = planList.toArray(new String[0]);
 

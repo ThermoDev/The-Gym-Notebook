@@ -67,6 +67,7 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
         TextView exerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
         exerciseName.setText(getItem(position));
 
+
         Exercise currentExercise = exerciseList.get(position);
         if(currentExercise.getReps() != 0){
             String string = currentExercise.getReps() + "";

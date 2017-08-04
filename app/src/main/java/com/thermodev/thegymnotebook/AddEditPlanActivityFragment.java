@@ -31,7 +31,7 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
     private EditText nameText;
     private EditText descriptionText;
     static ArrayList<Exercise> exerciseList;
-    private ExerciseArrayAdapter myAdapter;
+    private ExerciseArrayAdapter mExerciseAdapter;
 
     //TODO: Remove tempWorkoutPlans after a database is implemented.
     public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
@@ -54,7 +54,7 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Creates the view
-        View view = inflater.inflate(R.layout.workout_plan_fragment_add_edit, container, false);
+        final View view = inflater.inflate(R.layout.workout_plan_fragment_add_edit, container, false);
 
         //Links the objects to the related layout components
         addWorkoutButton = (Button) view.findViewById(R.id.plan_add_edit_exercise);
@@ -63,6 +63,14 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
         nameText = (EditText) view.findViewById(R.id.plan_add_edit_name);
         descriptionText = (EditText) view.findViewById(R.id.plan_add_edit_description);
         exerciseList = new ArrayList<>();
+
+
+        //The adapter is created using previous arrays
+        mExerciseAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, exerciseList);
+
+        //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
+        listView.setAdapter(mExerciseAdapter);
+
 
         //Listener for adding a workout
         addWorkoutButton.setOnClickListener(new View.OnClickListener() {
@@ -75,30 +83,26 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
 
                 // Sets up input.
                 final EditText input = new EditText(getContext());
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text.
+                // Specify the type of input expected;
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
+
 
                 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Exercise newExercise = new Exercise(input.getText().toString());
                         // If we currently have a usable adapter
-                        if(myAdapter != null){
-                            myAdapter.add(input.getText().toString());
-                        }
-                        // Else, Create a new adapter
-                        else {
-                            String workoutName = input.getText().toString();
+                        mExerciseAdapter.add(newExercise);
+                        mExerciseAdapter.notifyDataSetChanged();
 
-                            //The adapter is created using previous arrays
-                            myAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, R.id.plan_list_add_edit_exercise, exerciseList);
-
-                            //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
-                            listView.setAdapter(myAdapter);
-
-                            //Adds the workout to the adapter
-                            myAdapter.add(workoutName);
+                        int tempCount= mExerciseAdapter.getCount();
+                        for(int i = 0; i < tempCount; i++){
+                            Exercise ex = mExerciseAdapter.getItem(i);
+                            Log.d(TAG, "onClick: Name - " + ex.getName());
+                            Log.d(TAG, "onClick: Reps - " + ex.getReps());
+                            Log.d(TAG, "onClick: Sets - " + ex.getSets());
                         }
                     }
                 });
@@ -116,8 +120,8 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // myAdapter and exerciseList should be the same number.
-//                Log.d(TAG, "onClick: " + myAdapter.getCount());
+                // mExerciseAdapter and exerciseList should be the same number.
+//                Log.d(TAG, "onClick: " + mExerciseAdapter.getCount());
 //                Log.d(TAG, "onClick: " + exerciseList.size());
 
                 WorkoutPlan workoutPlan = new WorkoutPlan(nameText.getText().toString());
@@ -130,7 +134,6 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                     workoutPlan.setDescription(descriptionText.getText().toString());
                 }
                 workoutPlan.setExercises(exerciseList);
-
                 tempWorkoutPlans.add(workoutPlan);
                 for(WorkoutPlan plan : tempWorkoutPlans){
                     Log.d(TAG, "onClick: Workout Plan " + plan.getName());
@@ -139,6 +142,8 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                     }
 
                 }
+
+
                 getActivity().finish();
 
             }
