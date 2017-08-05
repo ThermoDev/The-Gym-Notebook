@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -71,70 +68,15 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
         Exercise currentExercise = exerciseList.get(position);
         if(currentExercise.getReps() != 0){
             String string = currentExercise.getReps() + "";
-            viewHolder.etReps.setText(string);
+            viewHolder.tvReps.setText(string);
         }
         if(currentExercise.getSets() != 0){
             String string = currentExercise.getSets() + "";
-            viewHolder.etSets.setText(string);
+            viewHolder.tvSets.setText(string);
         }
 
 
-        EditText setsEdit = (EditText) row.findViewById(R.id.plan_list_sets_edit_text);
-        if (setsEdit != null) {
-            setsEdit.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // Auto-generated method stub
-                }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // Auto-generated method stub
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    Log.d(TAG, "afterTextChanged: " + s.toString());
-                    Exercise currentExercise = exerciseList.get(position);
-                    if (s.toString().length() >= 10) {
-                        currentExercise.setSets(Integer.parseInt(s.toString().substring(0, 10)));
-                    } else if (s.toString().equals("")) {
-                        currentExercise.setSets(0);
-                    } else {
-                        currentExercise.setSets(Integer.parseInt(s.toString()));
-                    }
-                }
-            });
-        }
-        EditText repsEdit = (EditText) row.findViewById(R.id.plan_list_reps_edit_text);
-        if (repsEdit != null) {
-//            repsEdit.setText(exerciseList.get(position).getReps());
-            repsEdit.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // Auto-generated method stub
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // Auto-generated method stub
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    Log.d(TAG, "afterTextChanged: " + s.toString());
-                    Exercise currentExercise = exerciseList.get(position);
-                    if (s.toString().length() >= 10) {
-                        currentExercise.setReps(Integer.parseInt(s.toString().substring(0, 10)));
-                    } else if (s.toString().equals("")) {
-                        currentExercise.setReps(0);
-                    } else {
-                        currentExercise.setReps(Integer.parseInt(s.toString()));
-                        Log.d(TAG, "onClick: Reps: " + exerciseList.get(position).getReps());
-                    }
-                }
-            });
-        }
 
         Button deleteButton = (Button) row.findViewById(R.id.plan_list_delete_button);
         if (deleteButton != null) {
@@ -188,13 +130,13 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
 
     private class ViewHolder{
         final TextView tvName;
-        final EditText etReps;
-        final EditText etSets;
+        final TextView tvReps;
+        final TextView tvSets;
 
         public ViewHolder(View v) {
             this.tvName = (TextView) v.findViewById(R.id.plan_list_add_edit_exercise);
-            this.etReps = (EditText) v.findViewById(R.id.plan_list_reps_edit_text);
-            this.etSets = (EditText) v.findViewById(R.id.plan_list_sets_edit_text);
+            this.tvReps = (TextView) v.findViewById(R.id.plan_list_reps_text_view);
+            this.tvSets = (TextView) v.findViewById(R.id.plan_list_sets_text_view);
         }
     }
 }

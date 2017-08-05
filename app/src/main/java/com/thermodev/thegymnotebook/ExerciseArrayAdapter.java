@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -52,117 +51,46 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
         View row = convertView;
         final Exercise genExercise;
         TextView tvExerciseName;
+        TextView tvReps;
+        TextView tvSets;
 
         if (row == null) {
             Log.d(TAG, "getView: CALLED IN IF");
             row = layoutInflater.inflate(layoutResourceId, parent, false);
-//            Exercise exercise = new Exercise(getItem(position));
-//            exerciseList.add(exercise);
 
+            //Sets up TextViews
             tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
             tvExerciseName.setText(getItem(position).getName());
 
-            genExercise = new Exercise(getItem(position).getName());
-            genExercise.setSets(0);
-            genExercise.setReps(0);
-            row.setTag(genExercise);
+            tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
+            tvSets.setText(String.valueOf(getItem(position).getSets()));
 
-//            exerciseList.add(genExercise);
+            tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
+            tvReps.setText(String.valueOf(getItem(position).getReps()));
+
+            genExercise = new Exercise(tvExerciseName.getText().toString());
+//            row.setTag(genExercise);
+
             Log.d(TAG, "getView: IF: " + position);
             Log.d(TAG, "getView: currentGetTag -  | Name: " + genExercise.getName() + " - Sets/Reps: " + genExercise.getSets() + "/" + genExercise.getReps());
-//            Log.d(TAG, "getView: Parent " + parent.toString());
 
         } else {
-            //TODO: Implement Else
             Log.d(TAG, "getView: CALLED IN ELSE: " + position);
+//            genExercise = (Exercise) row.getTag();
+//            Log.d(TAG, "getView: currentGetTag -  | Name: " + genExercise.getName() + " - Sets/Reps: " + genExercise.getSets() + "/" + genExercise.getReps());
 
-            genExercise = (Exercise) row.getTag();
-
-            Log.d(TAG, "getView: currentGetTag -  | Name: " + genExercise.getName() + " - Sets/Reps: " + genExercise.getSets() + "/" + genExercise.getReps());
-
-
+            // MERGE TextView outside if/else statements
             tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
             tvExerciseName.setText(getItem(position).getName());
-//            exerciseList.get(position).setReps(genExercise.getReps());
-//            exerciseList.get(position).setSets(genExercise.getSets());
+
+            tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
+            tvSets.setText(String.valueOf(getItem(position).getSets()));
+
+            tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
+            tvReps.setText(String.valueOf(getItem(position).getReps()));
+
+
         }
-//
-        Log.d(TAG, "getView: GenExercise:  " + genExercise.getName() + " - " + genExercise.getSets() + "/" + genExercise.getReps());
-        Log.d(TAG, "getView: GetItem    " + position + "   : " + getItem(position).getName() + " - " + getItem(position).getSets() + "/" + getItem(position).getReps());
-
-
-        EditText setsEdit = (EditText) row.findViewById(R.id.plan_list_sets_edit_text);
-        EditText repsEdit = (EditText) row.findViewById(R.id.plan_list_reps_edit_text);
-
-
-        //TODO: Determine if these lines are needed (Hint - Probs Not)
-//        int repsNum = (repsEdit.getText().toString().equals("")) ? 0 : (Integer.parseInt(repsEdit.getText().toString()));
-//        getItem(position).setReps(repsNum);
-//
-//        int setsNum = (repsEdit.getText().toString().equals("")) ? 0 : (Integer.parseInt(setsEdit.getText().toString()));
-//        getItem(position).setSets(setsNum);
-
-
-        Log.d(TAG, "getView: GenExercise:  " + genExercise.getName() + " - " + genExercise.getSets() + "/" + genExercise.getReps());
-        Log.d(TAG, "getView: GetItem    " + position + "   : " + getItem(position).getName() + " - " + getItem(position).getSets() + "/" + getItem(position).getReps());
-
-//        if (setsEdit != null) {
-//            setsEdit.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    // Auto-generated method stub
-//                    Log.d(TAG, "beforeTextChanged: NOT NUYLL NTUTA KSA TJAST ");
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    // Auto-generated method stub
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//                    Log.d(TAG, "afterTextChanged: " + s.toString());
-////                    Exercise currentExercise = getItem(position);
-//                    if (s.toString().length() >= 10) {
-//                        genExercise.setSets(Integer.parseInt(s.toString().substring(0, 10)));
-//                    } else if (s.toString().equals("")) {
-//                        genExercise.setSets(0);
-//                    } else {
-//                        genExercise.setSets(Integer.parseInt(s.toString()));
-//                        Log.d(TAG, "onClick: Reps: " + genExercise.getReps());
-//                    }
-//                }
-//            });
-//        }
-//
-//        if (repsEdit != null) {
-////            repsEdit.setText(exerciseList.get(position).getReps());
-//            repsEdit.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    // Auto-generated method stub
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    // Auto-generated method stub
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//                    Log.d(TAG, "afterTextChanged: " + s.toString());
-////                    Exercise currentExercise =  getItem(position);
-//                    if (s.toString().length() >= 10) {
-//                        genExercise.setReps(Integer.parseInt(s.toString().substring(0, 10)));
-//                    } else if (s.toString().equals("")) {
-//                        genExercise.setReps(0);
-//                    } else {
-//                        genExercise.setReps(Integer.parseInt(s.toString()));
-//                        Log.d(TAG, "onClick: Reps: " + genExercise.getReps());
-//                    }
-//                }
-//            });
-//        }
 
         Button deleteButton = (Button) row.findViewById(R.id.plan_list_delete_button);
         if (deleteButton != null) {

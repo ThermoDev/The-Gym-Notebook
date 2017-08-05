@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
     //Is Created on view
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Creates the view
         final View view = inflater.inflate(R.layout.workout_plan_fragment_add_edit, container, false);
 
@@ -92,18 +93,43 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Exercise newExercise = new Exercise(input.getText().toString());
-                        // If we currently have a usable adapter
-                        mExerciseAdapter.add(newExercise);
-                        mExerciseAdapter.notifyDataSetChanged();
+                        // Set-Up
+                        final Exercise newExercise = new Exercise(input.getText().toString());
+                        final View view = getActivity().getLayoutInflater().inflate(R.layout.number_picker, container, false);
+                        final NumberPicker npSets = (NumberPicker) view.findViewById(R.id.number_picker_sets);
+                        final NumberPicker npReps = (NumberPicker) view.findViewById(R.id.number_picker_reps);
 
-                        int tempCount= mExerciseAdapter.getCount();
-                        for(int i = 0; i < tempCount; i++){
-                            Exercise ex = mExerciseAdapter.getItem(i);
-                            Log.d(TAG, "onClick: Name - " + ex.getName());
-                            Log.d(TAG, "onClick: Reps - " + ex.getReps());
-                            Log.d(TAG, "onClick: Sets - " + ex.getSets());
-                        }
+                        // Set Min values
+                        npSets.setMinValue(0);
+                        npReps.setMinValue(0);
+
+                        // Set Max Values
+                        npSets.setMaxValue(50);
+                        npReps.setMaxValue(50);
+
+                        new AlertDialog.Builder(getActivity())
+                                .setView(view)
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        newExercise.setSets(npSets.getValue());
+                                        newExercise.setReps(npReps.getValue());
+
+                                        mExerciseAdapter.add(newExercise);
+                                        mExerciseAdapter.notifyDataSetChanged();
+
+                                        int tempCount= mExerciseAdapter.getCount();
+                                        for(int i = 0; i < tempCount; i++){
+                                            Exercise ex = mExerciseAdapter.getItem(i);
+                                            Log.d(TAG, "onClick: Name - " + ex.getName());
+                                            Log.d(TAG, "onClick: Reps - " + ex.getReps());
+                                            Log.d(TAG, "onClick: Sets - " + ex.getSets());
+                                        }
+                                    }
+                                })
+                                .setCancelable(false)
+                                .create()
+                                .show();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
