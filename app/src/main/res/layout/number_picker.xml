@@ -57,15 +57,5 @@
         android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/number_reps"/>
 
-    <Button
-        android:id="@+id/number_ok_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="32dp"
-        android:text="Button"
-        app:layout_constraintLeft_toLeftOf="@+id/number_picker_sets"
-        app:layout_constraintTop_toBottomOf="@+id/number_picker_sets"/>
-
 
 </android.support.constraint.ConstraintLayout>

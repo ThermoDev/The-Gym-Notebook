@@ -37,6 +37,8 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
     private Button mAddButton;
     private ListView mListView;
     private ExerciseSetArrayAdapter myAdapter;
+    List<Exercise> mExerciseList;
+
 
 
     @Override
@@ -54,6 +56,11 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
         mDateButton = (Button) view.findViewById(R.id.add_edit_date_button);
         mListView = (ListView) view.findViewById(R.id.add_edit_listview);
         mAddButton = (Button) view.findViewById(R.id.add_edit_commit_button);
+        mExerciseList = new ArrayList<>();
+
+        //Setting up Adapter
+        myAdapter = new ExerciseSetArrayAdapter(getContext(), R.layout.workout_plan_list_items, mExerciseList);
+
 
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +117,9 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
                 ListView dialogListView = (ListView) convertView.findViewById(R.id.exercise_list_view);
                 ArrayList<String> planList = new ArrayList<String>();
                 if (!tempWorkoutPlans.isEmpty()) {
-                    for (WorkoutPlan tempPlan : tempWorkoutPlans) {
-                        planList.add(tempPlan.getName());
+                    for (WorkoutPlan currentPlan : tempWorkoutPlans) {
+                        planList.add(currentPlan.getName());
+                        Log.d(TAG, "onOptionsItemSelected: wow " + currentPlan.getName());
                     }
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -125,7 +133,7 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
                 }
                 String plans[] = planList.toArray(new String[0]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, plans);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, plans);
                 dialogListView.setAdapter(adapter);
 
                 final Dialog myDialog = alertDialog.show();
@@ -134,22 +142,35 @@ public class AddEditWorkoutActivityFragment extends Fragment implements DatePick
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Log.d(TAG, "onItemClick - Postion: " + position);
-                        //TODO: Move List outside of listener scope so it can be edited
-                        List<Exercise> selectedExercises = new ArrayList<Exercise>();
-//                                tempWorkoutPlans.get(position).getExercises();
+                        mExerciseList = tempWorkoutPlans.get(position).getExercises();
 
-                        //TODO: SET-UP Adapter so it can be used outside of this listener scope as well.
-                        //The adapter is created using previous arrays
-                        myAdapter = new ExerciseSetArrayAdapter(getContext(), R.layout.workout_plan_list_items, R.id.plan_list_add_edit_exercise, selectedExercises);
-
-                        //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
-                        mListView.setAdapter(myAdapter);
-
-                        for (Exercise exercise : tempWorkoutPlans.get(position).getExercises()) {
-                            selectedExercises.add(exercise);
-                            myAdapter.add(exercise.getName());
+                        for(Exercise e : tempWorkoutPlans.get(position).getExercises()){
+                            Log.d(TAG, "onItemClick - Workout Plan Name: " + e.getName());
                         }
 
+                        /* TODO: Remove logging */
+                        /* Log.d(TAG, "onItemClick: =========================");
+                        if (!tempWorkoutPlans.isEmpty()) {
+                            for (WorkoutPlan currentPlan : tempWorkoutPlans) {
+                                Log.d(TAG, "onOptionsItemSelected: wow " + currentPlan.getName());
+                                for(Exercise ex : currentPlan.getExercises()) {
+                                    Log.d(TAG, "onItemClick: name: " + ex.getName());
+                                    Log.d(TAG, "onItemClick:  sets/reps" +ex.getSets() + "/" +ex.getSets());
+                                }
+                                Log.d(TAG, "onOptionsItemSelected: " + currentPlan.getExercises());
+                            }
+                        }
+                        Log.d(TAG, "onItemClick: ========================="); */
+
+                        for (Exercise exercise : mExerciseList) {
+//                            mExerciseList.add(exercise);
+                            myAdapter.add(exercise);
+                            Log.d(TAG, "onItemClick: Name: " + exercise.getName() + " sets: " + exercise.getSets());
+                        }
+
+                        // Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
+                        mListView.setAdapter(myAdapter);
+                        myAdapter.notifyDataSetChanged();
                         myDialog.dismiss();
                     }
                 });

@@ -22,16 +22,16 @@ import static android.content.ContentValues.TAG;
  * Created by Thermodev on 27-Jul-17.
  */
 
-public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
+public class ExerciseSetArrayAdapter extends ArrayAdapter<Exercise> {
     private Button button;
     private Context context;
     private int layoutResourceId;
     private final LayoutInflater layoutInflater;
-    private static List<Exercise> exerciseList;
+    private List<Exercise> exerciseList;
 
 
-    public ExerciseSetArrayAdapter(Context context, int resource, int textViewResourceId, List<Exercise> exerciseList) {
-        super(context, resource, textViewResourceId);
+    public ExerciseSetArrayAdapter(Context context, int resource,List<Exercise> exerciseList) {
+        super(context, resource);
         this.context = context;
         this.layoutResourceId = resource;
         this.layoutInflater = LayoutInflater.from(context);
@@ -54,7 +54,7 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
             row = inflater.inflate(layoutResourceId, parent, false);
             viewHolder = new ViewHolder(row);
             row.setTag(viewHolder);
-            Exercise exercise = new Exercise(getItem(position));
+            Exercise exercise = new Exercise(getItem(position).getName());
             exerciseList.add(exercise);
             Log.d(TAG, "getView - getItem: " + getItem(position));
         }else{
@@ -62,7 +62,7 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
         }
 
         TextView exerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
-        exerciseName.setText(getItem(position));
+        exerciseName.setText(getItem(position).getName());
 
 
         Exercise currentExercise = exerciseList.get(position);
@@ -123,7 +123,7 @@ public class ExerciseSetArrayAdapter extends ArrayAdapter<String> {
 
     @Nullable
     @Override
-    public String getItem(int position) {
+    public Exercise getItem(int position) {
         return super.getItem(position);
     }
 

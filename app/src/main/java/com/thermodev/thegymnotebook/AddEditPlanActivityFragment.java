@@ -115,6 +115,8 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
                                         newExercise.setSets(npSets.getValue());
                                         newExercise.setReps(npReps.getValue());
 
+                                        //Adding exercise to exerciseList
+                                        exerciseList.add(newExercise);
                                         mExerciseAdapter.add(newExercise);
                                         mExerciseAdapter.notifyDataSetChanged();
 
