@@ -23,16 +23,16 @@ import java.util.ArrayList;
  * Created by user on 26-Jul-17.
  */
 
-public class AddEditPlanActivityFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
-    private static final String TAG = "AddEditPlanActivityFrag";
+public class AddEditPlanFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+    private static final String TAG = "AddEditPlanFragment";
     //Initializing variables
-    private Button addWorkoutButton;
-    private Button saveButton;
-    private ListView listView;
-    private EditText nameText;
-    private EditText descriptionText;
-    static ArrayList<Exercise> exerciseList;
+    private Button mAddExerciseButton;
+    private Button mSaveButton;
+    private ListView mListView;
+    private EditText mNameText;
+    private EditText mDescriptionText;
     private ExerciseArrayAdapter mExerciseAdapter;
+    public static ArrayList<Exercise> exerciseList;
 
     //TODO: Remove tempWorkoutPlans after a database is implemented.
     public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
@@ -58,27 +58,27 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
         final View view = inflater.inflate(R.layout.workout_plan_fragment_add_edit, container, false);
 
         //Links the objects to the related layout components
-        addWorkoutButton = (Button) view.findViewById(R.id.plan_add_edit_exercise);
-        saveButton = (Button) view.findViewById(R.id.plan_add_edit_save);
-        listView = (ListView) view.findViewById(R.id.plan_add_edit_list_view);
-        nameText = (EditText) view.findViewById(R.id.plan_add_edit_name);
-        descriptionText = (EditText) view.findViewById(R.id.plan_add_edit_description);
+        mAddExerciseButton = (Button) view.findViewById(R.id.plan_add_edit_exercise);
+        mSaveButton = (Button) view.findViewById(R.id.plan_add_edit_save);
+        mListView = (ListView) view.findViewById(R.id.plan_add_edit_list_view);
+        mNameText = (EditText) view.findViewById(R.id.plan_add_edit_name);
+        mDescriptionText = (EditText) view.findViewById(R.id.plan_add_edit_description);
         exerciseList = new ArrayList<>();
 
 
         //The adapter is created using previous arrays
         mExerciseAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, exerciseList);
 
-        //Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
-        listView.setAdapter(mExerciseAdapter);
+        //Sets the mListView adapter using the ExerciseArrayAdapter class, and appending it to list_items
+        mListView.setAdapter(mExerciseAdapter);
 
 
         //Listener for adding a workout
-        addWorkoutButton.setOnClickListener(new View.OnClickListener() {
+        mAddExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Initializes count variable and if it's not null, we get the count from adapter, otherwise we set it to 0.
-                int currentCount = (listView.getAdapter() != null) ? listView.getAdapter().getCount() : 0;
+                int currentCount = (mListView.getAdapter() != null) ? mListView.getAdapter().getCount() : 0;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Exercise Name ");
 
@@ -145,21 +145,21 @@ public class AddEditPlanActivityFragment extends Fragment implements DatePickerD
         });
 
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // mExerciseAdapter and exerciseList should be the same number.
 //                Log.d(TAG, "onClick: " + mExerciseAdapter.getCount());
 //                Log.d(TAG, "onClick: " + exerciseList.size());
 
-                WorkoutPlan workoutPlan = new WorkoutPlan(nameText.getText().toString());
+                WorkoutPlan workoutPlan = new WorkoutPlan(mNameText.getText().toString());
                 for(int i = 0; i < exerciseList.size(); i++){
                     Log.d(TAG, "onClick: " + exerciseList.get(i).getName()
                             + " : " + exerciseList.get(i).getSets()
                             + "/" + exerciseList.get(i).getReps());
                 }
-                if(!descriptionText.equals(null)){
-                    workoutPlan.setDescription(descriptionText.getText().toString());
+                if(!mDescriptionText.equals(null)){
+                    workoutPlan.setDescription(mDescriptionText.getText().toString());
                 }
                 workoutPlan.setExercises(exerciseList);
                 tempWorkoutPlans.add(workoutPlan);

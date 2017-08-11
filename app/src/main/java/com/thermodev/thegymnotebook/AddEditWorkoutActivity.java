@@ -28,7 +28,7 @@ public class AddEditWorkoutActivity extends AppCompatActivity {
 
 
 
-        AddEditWorkoutActivityFragment fragment = new AddEditWorkoutActivityFragment();
+        AddEditWorkoutFragment fragment = new AddEditWorkoutFragment();
         Bundle arguments = getIntent().getExtras();
         fragment.setArguments(arguments);
 

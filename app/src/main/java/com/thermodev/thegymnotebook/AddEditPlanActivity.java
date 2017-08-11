@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
  * Created by user on 26-Jul-17.
  */
 
-public class AddEditPlanActivity extends AppCompatActivity implements AddEditPlanActivityFragment.OnSaveClicked{
+public class AddEditPlanActivity extends AppCompatActivity implements AddEditPlanFragment.OnSaveClicked{
     private static final String TAG = "AddEditPlanActivity";
 
     @Override
@@ -21,7 +21,7 @@ public class AddEditPlanActivity extends AppCompatActivity implements AddEditPla
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        AddEditPlanActivityFragment fragment = new AddEditPlanActivityFragment();
+        AddEditPlanFragment fragment = new AddEditPlanFragment();
 
         Bundle arguments = getIntent().getExtras();
 //        arguments.putSerializable(Task.class.getSimpleName(), task);

@@ -98,7 +98,10 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("Are you sure you want to delete exercise: " + getItem(position).getName() + "...?");
+                    // Retrieves Exercise Name to Delete.
+                    String exerciseName = getItem(position).getName();
+                    String name = ( exerciseName.length() >= 12 ? (exerciseName.substring(0,12) + " ...?") : (exerciseName + " ?") );
+                    builder.setTitle("Are you sure you want to delete exercise: " + name);
 
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -111,7 +114,6 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
                             Log.d(TAG, "onClick: reps " + getItem(position).getReps());
                             remove(getItem(position));
 
-                            clear();
                             notifyDataSetChanged();
                         }
                     });

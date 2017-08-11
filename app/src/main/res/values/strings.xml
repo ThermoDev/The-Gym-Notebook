@@ -9,7 +9,12 @@
     <string name="title_activity_add_edit">Add/Edit Workout</string>
     <string name="select_date">Select A Date…</string>
     <string name="no_plans_found">No Plans were found. Please Add a Custom Plan from the Main Menu.</string>
+    <string name="confirm_clear">Are you sure you want to clear the current data?</string>
     <string name="ok">OK</string>
+    <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="reps">Reps:</string>
+    <string name="sets">Sets:</string>
+    <string name="allocate_sets_reps">Allocate Sets/Reps</string>
 
 </resources>

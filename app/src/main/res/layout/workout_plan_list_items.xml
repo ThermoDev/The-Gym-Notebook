@@ -81,7 +81,7 @@
         android:id="@+id/plan_list_delete_button"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_delete"
+        android:background="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 

@@ -5,7 +5,7 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:orientation="vertical"
-                                             tools:context="com.thermodev.thegymnotebook.AddEditPlanActivityFragment"
+                                             tools:context="com.thermodev.thegymnotebook.AddEditPlanFragment"
                                              tools:showIn="@layout/workout_plan_activity_add_edit"
                                              android:id="@+id/content_add_edit"
                                              tools:layout_editor_absoluteY="137dp"
