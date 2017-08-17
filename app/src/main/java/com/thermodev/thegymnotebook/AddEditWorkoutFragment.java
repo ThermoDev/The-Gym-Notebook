@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static com.thermodev.thegymnotebook.AddEditPlanFragment.tempWorkoutPlans;
+import static com.thermodev.thegymnotebook.MainActivityFragment.workoutList;
 
 /**
  * Created by user on 26-Jul-17.
@@ -69,6 +70,10 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         mExerciseArrayAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, mExerciseList);
         mListView.setAdapter(mExerciseArrayAdapter);
 
+
+        final WorkoutArrayAdapter myAdapter = new WorkoutArrayAdapter(getContext(), R.layout.workout_list_items, workoutList);
+
+
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +83,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), datePickerListener, year, month, day);
                 datePickerDialog.show();
                 int dayOfMonth = datePickerDialog.getDatePicker().getDayOfMonth();
+
             }
         });
         mAddExerciseButton.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +92,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 //Initializes count variable and if it's not null, we get the count from adapter, otherwise we set it to 0.
 //                int currentCount = (mListView.getAdapter() != null) ? mListView.getAdapter().getCount() : 0;
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Exercise Name ");
 
                 // Sets up input.
@@ -100,45 +106,55 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Set-Up
-                        final Exercise newExercise = new Exercise(input.getText().toString());
-                        final View view = getActivity().getLayoutInflater().inflate(R.layout.number_picker, container, false);
-                        final NumberPicker npSets = (NumberPicker) view.findViewById(R.id.number_picker_sets);
-                        final NumberPicker npReps = (NumberPicker) view.findViewById(R.id.number_picker_reps);
 
-                        // Set Min values
-                        npSets.setMinValue(0);
-                        npReps.setMinValue(0);
-
-                        // Set Max Values
-                        npSets.setMaxValue(50);
-                        npReps.setMaxValue(50);
-
-                        new AlertDialog.Builder(getActivity())
-                                .setView(view)
-                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        newExercise.setSets(npSets.getValue());
-                                        newExercise.setReps(npReps.getValue());
-
-                                        //Adding exercise to exerciseList
-                                        mExerciseList.add(newExercise);
-                                        mExerciseArrayAdapter.add(newExercise);
-                                        mExerciseArrayAdapter.notifyDataSetChanged();
-
-                                        int tempCount= mExerciseArrayAdapter.getCount();
-                                        for(int i = 0; i < tempCount; i++){
-                                            Exercise ex = mExerciseArrayAdapter.getItem(i);
-                                            Log.d(TAG, "onClick: Name - " + ex.getName());
-                                            Log.d(TAG, "onClick: Reps - " + ex.getReps());
-                                            Log.d(TAG, "onClick: Sets - " + ex.getSets());
+                        if (input.getText().toString().isEmpty()) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setMessage(R.string.no_input_specified)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
                                         }
-                                    }
-                                })
-                                .setCancelable(false)
-                                .create()
-                                .show();
+                                    }).show();
+                        } else {
+                            // Set-Up
+                            final Exercise newExercise = new Exercise(input.getText().toString());
+                            final View view = getActivity().getLayoutInflater().inflate(R.layout.number_picker, container, false);
+                            final NumberPicker npSets = (NumberPicker) view.findViewById(R.id.number_picker_sets);
+                            final NumberPicker npReps = (NumberPicker) view.findViewById(R.id.number_picker_reps);
+
+                            // Set Min values
+                            npSets.setMinValue(0);
+                            npReps.setMinValue(0);
+
+                            // Set Max Values
+                            npSets.setMaxValue(50);
+                            npReps.setMaxValue(50);
+
+                            new AlertDialog.Builder(getActivity())
+                                    .setView(view)
+                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            newExercise.setSets(npSets.getValue());
+                                            newExercise.setReps(npReps.getValue());
+
+                                            //Adding exercise to exerciseList
+                                            mExerciseList.add(newExercise);
+                                            mExerciseArrayAdapter.add(newExercise);
+                                            mExerciseArrayAdapter.notifyDataSetChanged();
+
+                                            int tempCount = mExerciseArrayAdapter.getCount();
+                                            for (int i = 0; i < tempCount; i++) {
+                                                Exercise ex = mExerciseArrayAdapter.getItem(i);
+                                                Log.d(TAG, "onClick: Name - " + ex.getName());
+                                                Log.d(TAG, "onClick: Reps - " + ex.getReps());
+                                                Log.d(TAG, "onClick: Sets - " + ex.getSets());
+                                            }
+                                        }
+                                    })
+                                    .setCancelable(false)
+                                    .create()
+                                    .show();
+                        }
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -150,11 +166,22 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 builder.show();
             }
         });
-        //TODO: Implement Add Button
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Successfully added workout...", Toast.LENGTH_SHORT).show();
+                Workout workout = new Workout(mCalendar);
+                if(!mExerciseList.isEmpty()) {
+                    workout.setExercises(mExerciseList);
+                    String description = "";
+                    for(Exercise ex : mExerciseList){
+                        description += (ex.getName() + " : " + ex.getSets() + "/" + ex.getReps() + "\n");
+                    }
+                    workout.setDescription(description);
+                }
+                myAdapter.add(workout);
+                workoutList.add(workout);
+                getActivity().finish();
             }
         });
 
@@ -166,6 +193,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
             mDateButton.setText(selectedDay + " / " + (selectedMonth + 1) + " / "
                     + selectedYear);
+            mCalendar.set(selectedYear, selectedMonth, selectedDay);
         }
     };
 

@@ -57,40 +57,22 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
         if (row == null) {
             Log.d(TAG, "getView: CALLED IN IF");
             row = layoutInflater.inflate(layoutResourceId, parent, false);
-
-            //Sets up TextViews
-            tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
-            tvExerciseName.setText(getItem(position).getName());
-
-            tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
-            tvSets.setText(String.valueOf(getItem(position).getSets()));
-
-            tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
-            tvReps.setText(String.valueOf(getItem(position).getReps()));
-
-            genExercise = new Exercise(tvExerciseName.getText().toString());
 //            row.setTag(genExercise);
 
             Log.d(TAG, "getView: IF: " + position);
-            Log.d(TAG, "getView: currentGetTag -  | Name: " + genExercise.getName() + " - Sets/Reps: " + genExercise.getSets() + "/" + genExercise.getReps());
-
         } else {
             Log.d(TAG, "getView: CALLED IN ELSE: " + position);
-//            genExercise = (Exercise) row.getTag();
-//            Log.d(TAG, "getView: currentGetTag -  | Name: " + genExercise.getName() + " - Sets/Reps: " + genExercise.getSets() + "/" + genExercise.getReps());
-
-            // MERGE TextView outside if/else statements
-            tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
-            tvExerciseName.setText(getItem(position).getName());
-
-            tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
-            tvSets.setText(String.valueOf(getItem(position).getSets()));
-
-            tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
-            tvReps.setText(String.valueOf(getItem(position).getReps()));
-
-
         }
+        // Sets TextViews
+        tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
+        tvExerciseName.setText(getItem(position).getName());
+
+        tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
+        tvSets.setText(String.valueOf(getItem(position).getSets()));
+
+        tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
+        tvReps.setText(String.valueOf(getItem(position).getReps()));
+
 
         Button deleteButton = (Button) row.findViewById(R.id.plan_list_delete_button);
         if (deleteButton != null) {
@@ -143,6 +125,7 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
         return super.getItem(position);
     }
 
+    //TODO: Delete getMyExercise
 //    public Exercise getMyExercise(View v) {
 //        TextView tvName = (TextView) v.findViewById(R.id.plan_list_add_edit_exercise);
 //        EditText etSets = (EditText) v.findViewById(R.id.plan_list_sets_edit_text);

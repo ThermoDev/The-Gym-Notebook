@@ -63,20 +63,6 @@
         app:layout_constraintLeft_toRightOf="@+id/plan_list_sets_text_view"
         android:layout_marginLeft="24dp"/>
 
-    <TextView
-        android:id="@+id/plan_list_reps_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="30dp"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/plan_list_reps_holder"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintTop_toTopOf="@+id/plan_list_reps_holder"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/plan_list_reps_holder"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintVertical_bias="0.541"/>
-
     <Button
         android:id="@+id/plan_list_delete_button"
         android:layout_width="50dp"
@@ -84,5 +70,19 @@
         android:background="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/plan_list_reps_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        android:maxWidth="30dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/plan_list_reps_holder"
+        app:layout_constraintLeft_toRightOf="@+id/plan_list_reps_holder"
+        app:layout_constraintTop_toTopOf="@+id/plan_list_reps_holder"
+        app:layout_constraintVertical_bias="0.541"/>
 
 </android.support.constraint.ConstraintLayout>
