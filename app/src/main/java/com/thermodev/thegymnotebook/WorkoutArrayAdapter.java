@@ -3,6 +3,7 @@ package com.thermodev.thegymnotebook;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -52,7 +53,6 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
     public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup parent) {
         View row = convertView;
 
-
         if (row == null) {
             Log.d(TAG, "getView: CALLED IN IF");
             row = layoutInflater.inflate(layoutResourceId, parent, false);
@@ -62,6 +62,7 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
         tvWorkoutDate = (TextView) row.findViewById(R.id.workout_list_date);
         tvWorkoutDescription = (TextView) row.findViewById(R.id.workout_list_description);
         deleteButton = (Button) row.findViewById(R.id.workout_list_delete_button);
+        editButton = (Button) row.findViewById(R.id.workout_list_edit_button);
 
         Calendar cal = getItem(position).getCalendar();
         // Sets the workout date as a string.
@@ -104,6 +105,20 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
                     });
 
                     builder.show();
+
+                }
+            });
+        }
+        if(editButton != null){
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent detailIntent = new Intent(getContext(), AddEditWorkoutActivity.class);
+                    if (getItem(position) != null) {
+                        Workout workout = getItem(position);
+                        detailIntent.putExtra(Workout.class.getSimpleName(), workout);
+                        getContext().startActivity(detailIntent);
+                    }
 
                 }
             });

@@ -1,10 +1,12 @@
 package com.thermodev.thegymnotebook;
 
+import java.io.Serializable;
+
 /**
  * Created by user on 31-Jul-17.
  */
 
-public class Exercise {
+public class Exercise implements Serializable {
     private String name;
     private int sets;
     private int reps;
