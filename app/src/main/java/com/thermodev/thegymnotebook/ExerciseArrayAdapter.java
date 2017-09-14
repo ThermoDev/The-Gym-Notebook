@@ -124,20 +124,4 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
     public Exercise getItem(int position) {
         return super.getItem(position);
     }
-
-    //TODO: Delete getMyExercise
-//    public Exercise getMyExercise(View v) {
-//        TextView tvName = (TextView) v.findViewById(R.id.plan_list_add_edit_exercise);
-//        EditText etSets = (EditText) v.findViewById(R.id.plan_list_sets_edit_text);
-//        EditText etReps = (EditText) v.findViewById(R.id.plan_list_reps_edit_text);
-//        String name = tvName.getText().toString();
-//        String sets = etSets.getText().toString();
-//        String reps = etReps.getText().toString();
-//        Exercise myExercise = new Exercise(name);
-//        myExercise.setReps(Integer.parseInt(reps));
-//        myExercise.setSets(Integer.parseInt(sets));
-//        return myExercise;
-//    }
-
-
 }

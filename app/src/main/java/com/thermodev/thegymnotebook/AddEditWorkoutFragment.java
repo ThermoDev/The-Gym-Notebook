@@ -70,9 +70,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         mExerciseArrayAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, mExerciseList);
         mListView.setAdapter(mExerciseArrayAdapter);
 
-
         final WorkoutArrayAdapter myAdapter = new WorkoutArrayAdapter(getContext(), R.layout.workout_list_items, workoutList);
-
 
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
