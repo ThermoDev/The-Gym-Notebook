@@ -7,11 +7,14 @@ import java.io.Serializable;
  */
 
 public class Exercise implements Serializable {
+    public static final long serialVersionUID = 20170917;
+
+    private long m_Id;
     private String name;
     private int sets;
     private int reps;
 
-    public Exercise(String name) {
+    public Exercise( String name) {
         this.name = name;
         this.sets = 0;
         this.reps = 0;
@@ -39,5 +42,13 @@ public class Exercise implements Serializable {
 
     public void setReps(int reps) {
         this.reps = reps;
+    }
+
+    public long getId() {
+        return m_Id;
+    }
+
+    public void setId(long id) {
+        this.m_Id = id;
     }
 }

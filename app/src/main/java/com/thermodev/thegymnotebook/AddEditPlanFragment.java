@@ -2,6 +2,8 @@ package com.thermodev.thegymnotebook;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -152,17 +154,27 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
 //                Log.d(TAG, "onClick: " + mExerciseAdapter.getCount());
 //                Log.d(TAG, "onClick: " + exerciseList.size());
 
-                WorkoutPlan workoutPlan = new WorkoutPlan(mNameText.getText().toString());
-                for(int i = 0; i < exerciseList.size(); i++){
-                    Log.d(TAG, "onClick: " + exerciseList.get(i).getName()
-                            + " : " + exerciseList.get(i).getSets()
-                            + "/" + exerciseList.get(i).getReps());
+//                WorkoutPlan workoutPlan = new WorkoutPlan(getId(), mNameText.getText().toString(), mDescriptionText.getText().toString(), );
+
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                ContentValues values = new ContentValues();
+                values.put(WorkoutPlansContract.Columns.WORKOUT_NAME, mNameText.getText().toString());
+                values.put(WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION, mDescriptionText.getText().toString());
+
+
+                for(Exercise exercise : exerciseList){
+                    values.put(ExercisesContract.Columns.EXERCISES_NAME, exercise.getName());
+                    values.put(ExercisesContract.Columns.EXERCISES_SETS, exercise.getSets());
+                    values.put(ExercisesContract.Columns.EXERCISES_REPS, exercise.getReps());
                 }
-                if(!mDescriptionText.equals(null)){
-                    workoutPlan.setDescription(mDescriptionText.getText().toString());
-                }
-                workoutPlan.setExercises(exerciseList);
-                tempWorkoutPlans.add(workoutPlan);
+//                if(!mDescriptionText.equals(null)){
+//                    workoutPlan.setDescription(mDescriptionText.getText().toString());
+//                }
+//                workoutPlan.setExercises(exerciseList);
+
+//                tempWorkoutPlans.add(workoutPlan);
+                contentResolver.insert(ExercisesContract.CONTENT_URI, values);
+
                 for(WorkoutPlan plan : tempWorkoutPlans){
                     Log.d(TAG, "onClick: Workout Plan " + plan.getName());
                     for(Exercise exercise : plan.getExercises()){
