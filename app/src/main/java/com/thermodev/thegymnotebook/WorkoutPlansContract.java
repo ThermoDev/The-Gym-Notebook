@@ -14,7 +14,7 @@ import static com.thermodev.thegymnotebook.AppProvider.CONTENT_AUTHORITY_URI;
 public class WorkoutPlansContract {
     static final String TABLE_NAME = "Workouts";
 
-    // The Tasks Fields
+    // The WorkoutPlans Fields
     public static class Columns {
         public static final String _ID = BaseColumns._ID;
         public static final String WORKOUT_NAME = "Name";
@@ -28,18 +28,18 @@ public class WorkoutPlansContract {
     }
 
     /**
-     * The URI to access the Exercises Table.
+     * The URI to access the WorkoutPlans Table.
      */
     public static final Uri CONTENT_URI = Uri.withAppendedPath(CONTENT_AUTHORITY_URI, TABLE_NAME);
 
     static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + CONTENT_AUTHORITY + "." + TABLE_NAME;
     static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + CONTENT_AUTHORITY + "." + TABLE_NAME;
 
-    static Uri buildTaskUri(long workoutId){
+    static Uri buildWorkoutPlanUri(long workoutId){
         return ContentUris.withAppendedId(CONTENT_URI, workoutId);
     }
 
-    static long getWorkoutId(Uri uri){
+    static long getWorkoutPlanId(Uri uri){
         return ContentUris.parseId(uri);
     }
 }

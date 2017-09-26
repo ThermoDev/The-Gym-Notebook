@@ -13,7 +13,8 @@ import android.util.Log;
 /**
  * Created by Thermolink on 17-Sep-17.
  *
- * Provider for the TaskTimer app. This is the only class that knows about {@link AppDatabase}
+ * Provider for the Gym Notebook app. This is the only class that knows about {@link AppDatabase}
+ *
  */
 
 public class AppProvider extends ContentProvider {
@@ -66,6 +67,7 @@ public class AppProvider extends ContentProvider {
             case EXERCISES:
                 queryBuilder.setTables(ExercisesContract.TABLE_NAME);
                 break;
+
             case EXERCISES_ID:
                 queryBuilder.setTables(ExercisesContract.TABLE_NAME);
                 long exerciseId = ExercisesContract.getExerciseId(uri);
@@ -141,6 +143,7 @@ public class AppProvider extends ContentProvider {
 
         Uri returnUri;
         long recordId;
+        Log.d(TAG, "insert: VALUES " + values.toString());
 
         switch(match) {
             case EXERCISES:
@@ -154,7 +157,7 @@ public class AppProvider extends ContentProvider {
                 break;
 
             case WORKOUTS:
-                db = mOpenHelper.getWritableDatabase();
+                db = mOpenHelper.   getWritableDatabase();
                 recordId = db.insert(WorkoutsContract.TABLE_NAME, null, values);
                 if(recordId >=0) {
                     returnUri = WorkoutsContract.buildWorkoutUri(recordId);

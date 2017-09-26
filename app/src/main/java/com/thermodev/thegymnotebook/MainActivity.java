@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void planAddEditRequest(Workout workout) {
-        Log.d(TAG, "taskEditRequest - Starts");
+        Log.d(TAG, "workoutAddEditRequest - Starts");
         {
             // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditPlanActivity.class);
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void workoutAddEditRequest() {
-        Log.d(TAG, "taskEditRequest - Starts");
+        Log.d(TAG, "workoutAddEditRequest - Starts");
         {
             // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditWorkoutActivity.class);

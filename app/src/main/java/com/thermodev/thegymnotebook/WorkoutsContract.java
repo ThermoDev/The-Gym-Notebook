@@ -14,7 +14,7 @@ import static com.thermodev.thegymnotebook.AppProvider.CONTENT_AUTHORITY_URI;
 public class WorkoutsContract {
     static final String TABLE_NAME = "Workouts";
 
-    // The Tasks Fields
+    // The WorkoutsContract Fields
     public static class Columns {
         public static final String _ID = BaseColumns._ID;
         public static final String WORKOUT_NAME = "Name";
@@ -29,7 +29,7 @@ public class WorkoutsContract {
     }
 
     /**
-     * The URI to access the Exercises Table.
+     * The URI to access the Workout Table.
      */
     public static final Uri CONTENT_URI = Uri.withAppendedPath(CONTENT_AUTHORITY_URI, TABLE_NAME);
 

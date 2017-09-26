@@ -14,7 +14,7 @@ import static com.thermodev.thegymnotebook.AppProvider.CONTENT_AUTHORITY_URI;
 public class ExercisesContract {
     static final String TABLE_NAME = "Exercises";
 
-    // The Tasks Fields
+    // The Exercises Fields
     public static class Columns{
         public static final String _ID = BaseColumns._ID;
         public static final String EXERCISES_NAME = "Name";

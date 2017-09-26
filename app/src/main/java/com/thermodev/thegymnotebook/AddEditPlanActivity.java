@@ -24,7 +24,6 @@ public class AddEditPlanActivity extends AppCompatActivity implements AddEditPla
         AddEditPlanFragment fragment = new AddEditPlanFragment();
 
         Bundle arguments = getIntent().getExtras();
-//        arguments.putSerializable(Task.class.getSimpleName(), task);
         fragment.setArguments(arguments);
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

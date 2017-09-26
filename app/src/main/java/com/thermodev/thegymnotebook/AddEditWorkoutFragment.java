@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -101,10 +103,8 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
 
-
-
                 // Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -189,10 +189,30 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 ContentValues values = new ContentValues();
+                //Creating exerciseValues
+                ContentValues exerciseValues = new ContentValues();
+                String exercisesId = "";
+                //Inserting into exerciseValues, each exercise
+                for(Exercise ex : workout.getExercises()){
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, ex.getName() );
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, ex.getReps() );
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, ex.getSets() );
+                    // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
+                    Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
+                    exercisesId += ContentUris.parseId(exerciseUri) +",";
+                    exerciseValues.clear();
+                }
+
+                Log.d(TAG, "onClick: Exercise ID: " + exercisesId);
+
                 values.put(WorkoutsContract.Columns.START_DATE, mCalendar.getTime().toString());
                 values.put(WorkoutsContract.Columns.WORKOUT_DESCRIPTION, workout.getDescription());
+                values.put(WorkoutsContract.Columns.WORKOUT_EXERCISES, exercisesId);
 
-                contentResolver.insert(WorkoutsContract.CONTENT_URI, values);
+                Uri uri = contentResolver.insert(WorkoutsContract.CONTENT_URI, values);
+
+                ContentUris.parseId(uri);
+
                 myAdapter.add(workout);
                 workoutList.add(workout);
                 getActivity().finish();
@@ -215,8 +235,6 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_add_edit_workout, menu);
-        return;
-
     }
 
 
