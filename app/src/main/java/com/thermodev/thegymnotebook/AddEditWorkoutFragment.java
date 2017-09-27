@@ -39,7 +39,7 @@ import static com.thermodev.thegymnotebook.MainActivityFragment.workoutList;
  * Created by Thermolink on 26-Jul-17.
  */
 
-public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
     private static final String TAG = "AddEditWorkoutFragment";
     private Button mDateButton;
     private Button mAddButton;
@@ -49,7 +49,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
     List<Exercise> mExerciseList;
     private Calendar mCalendar;
 
-
+    public static final int LOADER_ID = 0;
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -72,9 +72,8 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
         // Setting up Adapter
         mExerciseArrayAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, mExerciseList);
-        mListView.setAdapter(mExerciseArrayAdapter);
 
-        final WorkoutArrayAdapter myAdapter = new WorkoutArrayAdapter(getContext(), R.layout.workout_list_items, workoutList);
+        mListView.setAdapter(mExerciseArrayAdapter);
 
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,8 +147,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                                             mExerciseArrayAdapter.add(newExercise);
                                             mExerciseArrayAdapter.notifyDataSetChanged();
 
-                                            int tempCount = mExerciseArrayAdapter.getCount();
-                                            for (int i = 0; i < tempCount; i++) {
+                                            for (int i = 0; i < mExerciseArrayAdapter.getCount(); i++) {
                                                 Exercise ex = mExerciseArrayAdapter.getItem(i);
                                                 Log.d(TAG, "onClick: Name - " + ex.getName());
                                                 Log.d(TAG, "onClick: Reps - " + ex.getReps());
@@ -176,9 +174,8 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Successfully added workout...", Toast.LENGTH_SHORT).show();
-                Workout workout = new Workout( getId(), mCalendar);
+                Workout workout = new Workout( getId(), mCalendar.getTime().toString());
                 if(!mExerciseList.isEmpty()) {
-                    workout.setExercises(mExerciseList);
                     String description = "";
                     for(Exercise ex : mExerciseList){
                         description += (ex.getName() + " : " + ex.getSets() + "/" + ex.getReps() + "\n");
@@ -193,7 +190,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 ContentValues exerciseValues = new ContentValues();
                 String exercisesId = "";
                 //Inserting into exerciseValues, each exercise
-                for(Exercise ex : workout.getExercises()){
+                for(Exercise ex : mExerciseList){
                     exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, ex.getName() );
                     exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, ex.getReps() );
                     exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, ex.getSets() );
@@ -213,7 +210,6 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
                 ContentUris.parseId(uri);
 
-                myAdapter.add(workout);
                 workoutList.add(workout);
                 getActivity().finish();
             }
@@ -320,6 +316,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         }
         return true;
     }
+
 
 
 }

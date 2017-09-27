@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdapter.OnWorkoutClickListener {
     private static final String TAG = "MainActivity";
+    public static final int DIALOG_ID_DELETE = 1;
+    public static final int DIALOG_ID_CANCEL_EDIT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 planAddEditRequest(null);
                 break;
             case R.id.action_add_workout:
-                workoutAddEditRequest();
+                workoutAddEditRequest(null);
                 break;
         }
 
@@ -62,14 +64,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void workoutAddEditRequest() {
+    private void workoutAddEditRequest(Workout workout) {
         Log.d(TAG, "workoutAddEditRequest - Starts");
         {
-            // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditWorkoutActivity.class);
+            if (workout != null) {
+                detailIntent.putExtra(Workout.class.getSimpleName(), workout);
+                startActivity(detailIntent);
+            }else{
             startActivity(detailIntent);
+        }
         }
     }
 
 
+    @Override
+    public void onEditClick(Workout workout) {
+        workoutAddEditRequest(workout);
+    }
+
+    @Override
+    public void onDeleteClick(final Workout workout) {
+        AppDialog appDialog = new AppDialog();
+        Bundle args = new Bundle();
+
+        args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldialog_message, workout.getId(), workout.getCalendar()));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldialog_positive_caption);
+
+        args.putLong("WorkoutId", workout.getId());
+
+        appDialog.setArguments(args);
+        appDialog.show(getFragmentManager(), null);
+    }
 }

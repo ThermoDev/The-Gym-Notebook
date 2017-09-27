@@ -1,55 +1,41 @@
 package com.thermodev.thegymnotebook;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
 
 /**
- * Created by user on 17-Aug-17.
+ * Created by Thermolink on 17-Aug-17.
  */
-public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
+class WorkoutArrayAdapter extends RecyclerView.Adapter<WorkoutArrayAdapter.WorkoutViewHolder> {
     private static final String TAG = "WorkoutArrayAdapter";
-    private Context context;
-    private int layoutResourceId;
-    private final LayoutInflater layoutInflater;
-    private List<Workout> mWorkouts;
+//    private Context context;
+//    private int layoutResourceId;
+//    private final LayoutInflater layoutInflater;
+//    private List<Workout> mWorkouts;
 
-    private TextView tvWorkoutDate;
-    private TextView tvWorkoutDescription;
-    private Button deleteButton;
-    private Button editButton;
+    private OnWorkoutClickListener listener;
+    private Cursor mCursor;
 
-
-    public WorkoutArrayAdapter(Context context, int resource, List<Workout> workoutList) {
-        super(context, resource);
-        this.layoutResourceId = resource;
-        this.layoutInflater = LayoutInflater.from(context);
-        this.mWorkouts = workoutList;
+    interface OnWorkoutClickListener{
+        void onEditClick(Workout workout);
+        void onDeleteClick(Workout workout);
     }
 
-    @Override
-    public int getCount() {
-        return super.getCount();
+    public WorkoutArrayAdapter(Cursor cursor, OnWorkoutClickListener listener) {
+        this.mCursor = cursor;
+        this.listener = listener;
     }
 
-
+    //TODO: DELETE THIS COMMENT
+/*
     @NonNull
-    @Override
     public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup parent) {
         View row = convertView;
 
@@ -66,13 +52,13 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
 
         Calendar cal = getItem(position).getCalendar();
         // Sets the workout date as a string.
-        final String workoutDate = cal.getDisplayName(Calendar.DAY_OF_WEEK ,Calendar.LONG, Locale.getDefault()) + " "
+        final String workoutDate = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) + " "
                 + cal.get(Calendar.DAY_OF_MONTH) + " - "
-                +  cal.getDisplayName(Calendar.MONTH ,Calendar.LONG, Locale.getDefault())
+                + cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
                 + " - " + cal.get(Calendar.YEAR);
 
 
-        tvWorkoutDate.setText(workoutDate );
+        tvWorkoutDate.setText(workoutDate);
         tvWorkoutDescription.setText(getItem(position).getDescription());
 
         if (deleteButton != null) {
@@ -109,7 +95,7 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
                 }
             });
         }
-        if(editButton != null){
+        if (editButton != null) {
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -125,6 +111,120 @@ public class WorkoutArrayAdapter extends ArrayAdapter<Workout> {
         }
         return row;
     }
+    */
+
+    @Override
+    public WorkoutViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_list_items, parent, false);
+        return new WorkoutViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(WorkoutViewHolder workoutHolder, int position) {
+        if ((mCursor == null) || (mCursor.getCount() == 0)) {
+            Log.d(TAG, "onBindViewHolder - Providing Instructions");
+            workoutHolder.tvWorkoutDate.setText(R.string.empty_description);
+            workoutHolder.tvWorkoutDescription.setText(R.string.instructions);
+            workoutHolder.editButton.setVisibility(View.GONE);
+            workoutHolder.deleteButton.setVisibility(View.GONE);
+        } else {
+            if(!mCursor.moveToPosition(position)){
+                throw new IllegalStateException("Couldn't move cursor to Position: " + position);
+            }
+            String exercisesToSplit = mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_EXERCISES));
+            String[] exercisesSplit = exercisesToSplit.split(",");
+
+            //TODO: Figure out a way to use the exercise ID, to retrieve an Exercise from the database.
+            String exercisesToDisplay = "";
+            for(int i = 0; i < exercisesSplit.length; i++){
+                exercisesToDisplay +=  mCursor.getString(mCursor.getColumnIndex(ExercisesContract.Columns._ID));
+            }
+
+            final Workout workout = new Workout(mCursor.getLong(mCursor.getColumnIndex(WorkoutsContract.Columns._ID)),
+                    mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.START_DATE)),
+                    mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_EXERCISES)),
+                    mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_DESCRIPTION)));
+            View.OnClickListener buttonListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()){
+                        case R.id.workout_list_delete_button:
+                            if(listener != null){
+                                listener.onDeleteClick(workout);
+                            }
+                            break;
+                        case R.id.workout_list_edit_button:
+                            if(listener != null){
+                                listener.onEditClick(workout);
+                            }
+                            break;
+                        default:
+                            Log.d(TAG, "onClick: Default ");
+                            break;
+                    }
+                }
+            };
+
+            workoutHolder.editButton.setOnClickListener(buttonListener);
+            workoutHolder.deleteButton.setOnClickListener(buttonListener);
+
+        }
+    }
+
+        @Override
+        public int getItemCount () {
+            return 0;
+        }
+
+    /**
+     * Swap in New Cursor, returning the new cursor
+     * The Returned old cursor is <em>not</em> closed.
+     *
+     *
+     * @param newCursor The new Cursor to be used.
+     * @return Returns the previously set cursor, or null if there wasn't one.
+     * If the given new cursor is the same instance as the previously set Cursor,
+     * null is also returned.
+     */
+    Cursor swapCursor(Cursor newCursor){
+        if(newCursor == mCursor){
+            return null;
+        }
+
+        final Cursor oldCursor = mCursor;
+        mCursor = newCursor;
+        if(newCursor != null){
+            // Notify Observers of new cursor
+            notifyDataSetChanged();
+        }else{
+            // Notify Observers of lack of cursor
+            notifyItemRangeRemoved(0, getItemCount());
+        }
+        return oldCursor;
+    }
 
 
-}
+    /**
+         * WorkoutViewHolder
+         * Will be used by this class to set the required items in a row.
+         */
+        static class WorkoutViewHolder extends RecyclerView.ViewHolder {
+            private static final String TAG = "WorkoutViewHolder";
+
+            TextView tvWorkoutDate = null;
+            TextView tvWorkoutDescription = null;
+            Button editButton = null;
+            Button deleteButton = null;
+
+            public WorkoutViewHolder(View row) {
+                super(row);
+
+                tvWorkoutDate = (TextView) row.findViewById(R.id.workout_list_date);
+                tvWorkoutDescription = (TextView) row.findViewById(R.id.workout_list_description);
+                deleteButton = (Button) row.findViewById(R.id.workout_list_delete_button);
+                editButton = (Button) row.findViewById(R.id.workout_list_edit_button);
+
+            }
+        }
+
+    }

@@ -1,9 +1,6 @@
 package com.thermodev.thegymnotebook;
 
-import java.util.Calendar;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by user on 26-Jul-17.
@@ -13,28 +10,35 @@ class Workout implements Serializable {
     public static final long serialVersionUID = 20170917;
 
     private long m_Id;
-    private Calendar mCalendar;
-    private List<Exercise> mExercises;
+    private String mCalendar;
+    private String mExercises;
     private String mDescription;
 
-    public Workout(long id, Calendar calendar) {
+    public Workout(long id, String calendar) {
         this.m_Id = id;
         this.mCalendar = calendar;
     }
 
-    public Calendar getCalendar() {
+    public Workout(long m_Id, String calendar, String exercises, String description) {
+        this.m_Id = m_Id;
+        mCalendar = calendar;
+        mExercises = exercises;
+        mDescription = description;
+    }
+
+    public String getCalendar() {
         return mCalendar;
     }
 
-    public void setCalendar(Calendar calendar) {
+    public void setCalendar(String calendar) {
         mCalendar = calendar;
     }
 
-    public List<Exercise> getExercises() {
+    public String getExercises() {
         return mExercises;
     }
 
-    public void setExercises(List<Exercise> exercises) {
+    public void setExercises(String exercises) {
         mExercises = exercises;
     }
 
