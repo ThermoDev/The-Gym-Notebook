@@ -190,15 +190,21 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 ContentValues exerciseValues = new ContentValues();
                 String exercisesId = "";
                 //Inserting into exerciseValues, each exercise
-                for(Exercise ex : mExerciseList){
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, ex.getName() );
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, ex.getReps() );
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, ex.getSets() );
+                for(int i = 0; i < mExerciseList.size();i++ ){
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName() );
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps() );
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets() );
                     // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
                     Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
-                    exercisesId += ContentUris.parseId(exerciseUri) +",";
+                    exercisesId += ContentUris.parseId(exerciseUri);
+                    // Adds commas if it is not the last item in the list
+                    if(mExerciseList.size() -1 != i) {
+                        exercisesId += ",";
+                    }
                     exerciseValues.clear();
                 }
+
+
 
                 Log.d(TAG, "onClick: Exercise ID: " + exercisesId);
 

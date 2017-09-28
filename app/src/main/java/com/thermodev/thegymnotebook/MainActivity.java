@@ -49,13 +49,14 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
         return super.onOptionsItemSelected(item);
     }
 
-    private void planAddEditRequest(Workout workout) {
+    private void planAddEditRequest(WorkoutPlan workoutPlan) {
         Log.d(TAG, "workoutAddEditRequest - Starts");
         {
+
             // Starts the detail activity for the selected Item
             Intent detailIntent = new Intent(this, AddEditPlanActivity.class);
-            if (workout != null) {
-                detailIntent.putExtra(Workout.class.getSimpleName(), workout);
+            if (workoutPlan != null) {
+                detailIntent.putExtra(WorkoutPlan.class.getSimpleName(), workoutPlan);
                 startActivity(detailIntent);
             } else {
                 startActivity(detailIntent);
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
                 detailIntent.putExtra(Workout.class.getSimpleName(), workout);
                 startActivity(detailIntent);
             }else{
-            startActivity(detailIntent);
-        }
+                startActivity(detailIntent);
+            }
         }
     }
 

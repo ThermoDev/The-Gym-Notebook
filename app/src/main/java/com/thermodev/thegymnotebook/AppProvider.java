@@ -12,9 +12,8 @@ import android.util.Log;
 
 /**
  * Created by Thermolink on 17-Sep-17.
- *
+ * <p>
  * Provider for the Gym Notebook app. This is the only class that knows about {@link AppDatabase}
- *
  */
 
 public class AppProvider extends ContentProvider {
@@ -63,7 +62,7 @@ public class AppProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-        switch(match) {
+        switch (match) {
             case EXERCISES:
                 queryBuilder.setTables(ExercisesContract.TABLE_NAME);
                 break;
@@ -98,10 +97,15 @@ public class AppProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unable to identify URI: " + uri);
         }
 
+        if(mOpenHelper == null){
+            mOpenHelper = AppDatabase.getInstance(getContext());
+        }
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 //        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if(getContext() != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return cursor;
     }
 
@@ -116,11 +120,11 @@ public class AppProvider extends ContentProvider {
             case EXERCISES_ID:
                 return ExercisesContract.CONTENT_ITEM_TYPE;
 
-//            case WORKOUTS:
-//                return WorkoutsContract.Workouts.CONTENT_TYPE;
-//
-//            case WORKOUTS_ID:
-//                return WorkoutsContract.Workouts.CONTENT_ITEM_TYPE;
+            case WORKOUTS:
+                return WorkoutsContract.CONTENT_TYPE;
+
+            case WORKOUTS_ID:
+                return WorkoutsContract.CONTENT_ITEM_TYPE;
 //
 //            case WORKOUT_PLANS:
 //                return DurationsContract.WorkoutPlans.CONTENT_TYPE;
@@ -145,11 +149,11 @@ public class AppProvider extends ContentProvider {
         long recordId;
         Log.d(TAG, "insert: VALUES " + values.toString());
 
-        switch(match) {
+        switch (match) {
             case EXERCISES:
                 db = mOpenHelper.getWritableDatabase();
                 recordId = db.insert(ExercisesContract.TABLE_NAME, null, values);
-                if(recordId >=0) {
+                if (recordId >= 0) {
                     returnUri = ExercisesContract.buildExerciseUri(recordId);
                 } else {
                     throw new android.database.SQLException("Failed to insert into " + uri.toString());
@@ -157,9 +161,9 @@ public class AppProvider extends ContentProvider {
                 break;
 
             case WORKOUTS:
-                db = mOpenHelper.   getWritableDatabase();
+                db = mOpenHelper.getWritableDatabase();
                 recordId = db.insert(WorkoutsContract.TABLE_NAME, null, values);
-                if(recordId >=0) {
+                if (recordId >= 0) {
                     returnUri = WorkoutsContract.buildWorkoutUri(recordId);
                 } else {
                     throw new android.database.SQLException("Failed to insert into " + uri.toString());
@@ -204,7 +208,7 @@ public class AppProvider extends ContentProvider {
 
         String selectionCriteria;
 
-        switch(match) {
+        switch (match) {
             case EXERCISES:
                 db = mOpenHelper.getWritableDatabase();
                 count = db.delete(ExercisesContract.TABLE_NAME, selection, selectionArgs);
@@ -215,7 +219,7 @@ public class AppProvider extends ContentProvider {
                 long exerciseId = ExercisesContract.getExerciseId(uri);
                 selectionCriteria = ExercisesContract.Columns._ID + " = " + exerciseId;
 
-                if((selection != null) && (selection.length()>0)) {
+                if ((selection != null) && (selection.length() > 0)) {
                     selectionCriteria += " AND (" + selection + ")";
                 }
                 count = db.delete(ExercisesContract.TABLE_NAME, selectionCriteria, selectionArgs);
@@ -256,7 +260,7 @@ public class AppProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
-        if(count > 0) {
+        if (count > 0) {
             // something was deleted
             Log.d(TAG, "delete: Setting notifyChange with " + uri);
             getContext().getContentResolver().notifyChange(uri, null);
@@ -279,7 +283,7 @@ public class AppProvider extends ContentProvider {
 
         String selectionCriteria;
 
-        switch(match) {
+        switch (match) {
 
             case EXERCISES:
                 db = mOpenHelper.getWritableDatabase();
@@ -291,7 +295,7 @@ public class AppProvider extends ContentProvider {
                 long exerciseId = ExercisesContract.getExerciseId(uri);
                 selectionCriteria = ExercisesContract.Columns._ID + " = " + exerciseId;
 
-                if( (selection != null) && (selection.length() > 0) ) {
+                if ((selection != null) && (selection.length() > 0)) {
                     selectionCriteria += " AND (" + selection + ")";
                 }
                 count = db.update(ExercisesContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
@@ -333,7 +337,7 @@ public class AppProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
-        if(count > 0) {
+        if (count > 0) {
             // something was deleted
             Log.d(TAG, "update: Setting notifyChange with " + uri);
             getContext().getContentResolver().notifyChange(uri, null);
@@ -344,7 +348,6 @@ public class AppProvider extends ContentProvider {
         Log.d(TAG, "Exiting update, returning " + count);
         return count;
     }
-
 
 
 }
