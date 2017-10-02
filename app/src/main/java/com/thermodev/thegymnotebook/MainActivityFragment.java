@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -25,11 +24,11 @@ import static com.thermodev.thegymnotebook.AddEditWorkoutFragment.LOADER_ID;
  */
 
 // Extending fragment, as this is a fragement.
-// Implementing LoaderMager.LoaderCallbacks<Cursor> to allow the Cursor to modify the View, which will work with the WorkoutArrayAdapter.
+// Implementing LoaderMager.LoaderCallbacks<Cursor> to allow the Cursor to modify the View, which will work with the WorkoutRecyclerViewAdapter.
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String TAG = "MainActivityFragment";
     public static ArrayList<Workout> workoutList = new ArrayList<>();
-    WorkoutArrayAdapter mAdapter;
+    WorkoutRecyclerViewAdapter mAdapter;
     RecyclerView mWorkoutRecyclerView;
 
     // Initiates the Loader
@@ -46,15 +45,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView - Starts");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
         mWorkoutRecyclerView = (RecyclerView) view.findViewById(R.id.workout_recyclerview);
 
         mWorkoutRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mAdapter = new WorkoutArrayAdapter(null, (WorkoutArrayAdapter.OnWorkoutClickListener) getActivity());
+        mAdapter = new WorkoutRecyclerViewAdapter(null, (WorkoutRecyclerViewAdapter.OnWorkoutClickListener) getActivity());
 
         mWorkoutRecyclerView.setAdapter(mAdapter);
 
-        TextView tvWorkout = (TextView) view.findViewById(R.id.current_workout);
         return view;
     }
 

@@ -35,8 +35,8 @@ public class WorkoutPlansContract {
     static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + CONTENT_AUTHORITY + "." + TABLE_NAME;
     static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + CONTENT_AUTHORITY + "." + TABLE_NAME;
 
-    static Uri buildWorkoutPlanUri(long workoutId){
-        return ContentUris.withAppendedId(CONTENT_URI, workoutId);
+    static Uri buildWorkoutPlanUri(long workoutPlanId){
+        return ContentUris.withAppendedId(CONTENT_URI, workoutPlanId);
     }
 
     static long getWorkoutPlanId(Uri uri){

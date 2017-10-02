@@ -9,32 +9,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
  * Created by Thermolink on 17-Aug-17.
  */
-class WorkoutArrayAdapter extends RecyclerView.Adapter<WorkoutArrayAdapter.WorkoutViewHolder> {
-    private static final String TAG = "WorkoutArrayAdapter";
+class WorkoutRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutRecyclerViewAdapter.WorkoutViewHolder> {
+    private static final String TAG = "WorkoutRecyclerViewAdap";
 //    private Context context;
 //    private int layoutResourceId;
 //    private final LayoutInflater layoutInflater;
 //    private List<Workout> mWorkouts;
 
-    private OnWorkoutClickListener listener;
+    private OnWorkoutClickListener mOnWorkoutListener;
     private Cursor mCursor;
 
     interface OnWorkoutClickListener {
         void onEditClick(Workout workout);
-
         void onDeleteClick(Workout workout);
     }
 
-    public WorkoutArrayAdapter(Cursor cursor, OnWorkoutClickListener listener) {
-        Log.d(TAG, "WorkoutArrayAdapter: Constructor Called");
+    public WorkoutRecyclerViewAdapter(Cursor cursor, OnWorkoutClickListener listener) {
+        Log.d(TAG, "WorkoutRecyclerViewAdapter: Constructor Called");
         this.mCursor = cursor;
-        this.listener = listener;
+        this.mOnWorkoutListener = listener;
     }
 
     //TODO: DELETE THIS COMMENT
@@ -136,93 +136,103 @@ class WorkoutArrayAdapter extends RecyclerView.Adapter<WorkoutArrayAdapter.Worko
                 throw new IllegalStateException("Couldn't move cursor to Position: " + position);
             }
 
-            String exercisesFound = mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_EXERCISES));
-            // If we have found any exercises from the Cursor
-            if (exercisesFound != null) {
-                // The projection for which the columns of the table will be looked at within the CursorLoader
-                String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
-                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS};
-
-                // Setting up the WHERE clause for CursorLoader, splitting id's already provided by "," in the db
-
-                AppProvider appProvider = new AppProvider();
-
-                // Splits the found exercises by the ",".
-                String[] exercisesIdSplitArray = exercisesFound.split(",");
-
-                Log.d(TAG, "onBindViewHolder:  ExerciseIdSplitArray" + Arrays.toString(exercisesIdSplitArray));
-
-                Log.d(TAG, "onBindViewHolder: ExerciseIdSplitArray Count: " + exercisesIdSplitArray.length);
-
-                String exerciseToFind = "";
-
-                if(exercisesIdSplitArray.length > 1){
-                    String exerciseIds = "";
-                    for(int i = 0; i < exercisesIdSplitArray.length; i++){
-                        // Replaces the last found array item and replaces the "," with "" for the database.
-                        Log.d(TAG, "onBindViewHolder: ExerciseIdSplitArray ITEM " + exercisesIdSplitArray[i]);
-                        Log.d(TAG, "onBindViewHolder: INDEX " + i);
-                        Log.d(TAG, "onBindViewHolder: ExerciseIdSplitArray LENGTH " + exercisesIdSplitArray.length);
-                        exerciseIds += exercisesIdSplitArray[i];
-                    }
-                    if(exerciseIds.split(",").length > 1) {
-                        exerciseToFind = ExercisesContract.Columns._ID + " IN (" + exerciseIds + ")";
-                    }
-                    Log.d(TAG, "onBindViewHolder: Exercises To Find: " + exerciseToFind);
-                }else {
-                    exerciseToFind = ExercisesContract.Columns._ID + " = " + exercisesFound.replace(",", "") + "";
-                }
-
-                // Creating a cursor loader
-                Cursor exerciseCursor = appProvider.query( ExercisesContract.CONTENT_URI ,projection, exerciseToFind, null, null);
-
-                // If there is a currently usable exerciseCursor
-                if(exerciseCursor != null){
-                    // Checks if any Exercises were found
-                    if(exerciseCursor.getCount() != 0) {
-
-                        // moveToFirst() to move the cursor to the first element.
-                        exerciseCursor.moveToFirst();
-                        Log.d(TAG, "onBindViewHolder: Exercise cursor Count: " + exerciseCursor.getCount());
-                        // moveToFirst() to move the cursor to the first element.
-                        exerciseCursor.moveToFirst();
-                        // Loops through all of the exercises found, then logs them.
-                        while(exerciseCursor.moveToNext()) {
-                            Log.d(TAG, "onBindViewHolder: ID: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns._ID)));
-                            Log.d(TAG, "onBindViewHolder: Name: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
-                            Log.d(TAG, "onBindViewHolder: Reps: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS)));
-                            Log.d(TAG, "onBindViewHolder: Sets: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS)));
-                        }
-                    }
-                    exerciseCursor.close();
-                }else{
-                    Log.d(TAG, "onBindViewHolder: Exercise Cursor returned null");
-                }
-            }
-//            String[] myExerciseIdArray  = exercisesFound.split(",");
+            // Setting this to visible, if there is a usable curosr, and the count of it is greater than one.
+            workoutHolder.editButton.setVisibility(View.VISIBLE);
+            workoutHolder.deleteButton.setVisibility(View.VISIBLE);
 
 
-//            for(int i = 0; i < myExerciseIdArray.length; i++){
-//                Log.d(TAG, "onBindViewHolder: Exercise ID: " + myExerciseIdArray[i]);
+
+            // TODO: Move this code that retrieves exercises..
+//            String exercisesFound = mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_EXERCISES));
+//            // If we have found any exercises from the Cursor
+//            if (exercisesFound != null) {
+//                // The projection for which the columns of the table will be looked at within the CursorLoader
+//                String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
+//                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS};
+//                AppProvider appProvider = new AppProvider();
+//
+//                // -- Setting up the WHERE clause for CursorLoader, splitting id's already provided by "," in the db --
+//
+//                // Splits the found exercises by the "," split.
+//                String[] exercisesIdSplitArray = exercisesFound.split(",");
+//
+//                // Initialize empty string in exercisesToFind
+//                String exercisesToFind = "";
+//
+//                // If the found split exercises ID is greater than one, meaning there is more than one item in the array:
+//                if(exercisesIdSplitArray.length > 1){
+//                    String exerciseIds = "";
+//                    for(int i = 0; i < exercisesIdSplitArray.length; i++){
+//                        exerciseIds += exercisesIdSplitArray[i];
+//                    }
+//                    // If the split array of the ID
+//                    if(exerciseIds.split(",").length > 1) {
+//                        exercisesToFind = ExercisesContract.Columns._ID + " IN (" + exerciseIds + ")";
+//                    }
+//                }else {
+//                    if(!exercisesFound.isEmpty()){
+//                        exercisesToFind = ExercisesContract.Columns._ID + " = " + exercisesFound.replace(",", "") + "";
+//                    }else{
+//                        exercisesToFind = null;
+//                    }
+//                }
+//
+//                // Creating a cursor loader
+//                Cursor exerciseCursor = appProvider.query( ExercisesContract.CONTENT_URI ,projection, exercisesToFind, null, null);
+//
+//                // If there is a currently usable exerciseCursor
+//                if(exerciseCursor != null){
+//                    // Checks if any Exercises were found
+//                    if(exerciseCursor.getCount() != 0) {
+//                        // moveToFirst() to move the cursor to the first element.
+//                        exerciseCursor.moveToFirst();
+//                        Log.d(TAG, "onBindViewHolder: Exercise cursor Count: " + exerciseCursor.getCount());
+//                        // moveToFirst() to move the cursor to the first element.
+//                        exerciseCursor.moveToFirst();
+//                        // Loops through all of the exercises found, then logs them.
+//                        while(exerciseCursor.moveToNext()) {
+//                            Log.d(TAG, "onBindViewHolder: ID: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns._ID))
+//                                    + " | Name: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
+//                            Log.d(TAG, "onBindViewHolder: Reps/Sets: " + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS))
+//                                    + "/" + exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS)));
+//                        }
+//                    }
+//                    exerciseCursor.close();
+//                }else{
+//                    Log.d(TAG, "onBindViewHolder: Exercise Cursor returned null");
+//                }
 //            }
 
-
             final Workout workout = new Workout(mCursor.getLong(mCursor.getColumnIndex(WorkoutsContract.Columns._ID)),
-                    mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.START_DATE)),
+                    mCursor.getLong(mCursor.getColumnIndex(WorkoutsContract.Columns.START_DATE)),
                     mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_EXERCISES)),
                     mCursor.getString(mCursor.getColumnIndex(WorkoutsContract.Columns.WORKOUT_DESCRIPTION)));
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(workout.getCalendar());
+
+            workoutHolder.tvWorkoutDescription.setText(workout.getDescription());
+            String day = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            String month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.ENGLISH);
+            int year = calendar.get(Calendar.YEAR);
+
+            String workoutDate = day + " " + dayOfMonth + " - " + month + ", " + year;
+
+            workoutHolder.tvWorkoutDate.setText(workoutDate);
+
             View.OnClickListener buttonListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     switch (v.getId()) {
                         case R.id.workout_list_delete_button:
-                            if (listener != null) {
-                                listener.onDeleteClick(workout);
+                            if (mOnWorkoutListener != null) {
+                                mOnWorkoutListener.onDeleteClick(workout);
                             }
                             break;
                         case R.id.workout_list_edit_button:
-                            if (listener != null) {
-                                listener.onEditClick(workout);
+                            if (mOnWorkoutListener != null) {
+                                mOnWorkoutListener.onEditClick(workout);
                             }
                             break;
                         default:
@@ -231,7 +241,6 @@ class WorkoutArrayAdapter extends RecyclerView.Adapter<WorkoutArrayAdapter.Worko
                     }
                 }
             };
-
             workoutHolder.editButton.setOnClickListener(buttonListener);
             workoutHolder.deleteButton.setOnClickListener(buttonListener);
         }

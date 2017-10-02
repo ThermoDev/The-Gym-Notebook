@@ -20,7 +20,8 @@
     <string name="instructions_heading">Instructions</string>
     <string name="instructions">Use the Add Button (+) in the Toolbar above to Create new Workouts.</string>
     <string name="empty_description"/>
-    <string name="deldialog_message">Deleting this will also delete all data associated with id: %1$d: %2$s.</string>
+    <string name="deldialog_message">Are you sure you want to delete the workout on : %1$s.</string>
     <string name="deldialog_positive_caption">Delete</string>
+    <string name="update_workout_button">Update Workout</string>
 
 </resources>

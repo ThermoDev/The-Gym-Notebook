@@ -1,7 +1,6 @@
 package com.thermodev.thegymnotebook;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,14 +18,13 @@ public class AddEditWorkoutActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: Called");
         setContentView(R.layout.workout_activity_add_edit);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
 
         AddEditWorkoutFragment fragment = new AddEditWorkoutFragment();
         Bundle arguments = getIntent().getExtras();
@@ -41,7 +39,6 @@ public class AddEditWorkoutActivity extends AppCompatActivity {
 //                Log.d(TAG, "onItemClick: help!");
 //            }
 //        });
-        Log.d(TAG, "onCreate: Wha");
     }
 
 

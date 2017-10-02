@@ -8,7 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdapter.OnWorkoutClickListener {
+import java.util.Calendar;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity  implements WorkoutRecyclerViewAdapter.OnWorkoutClickListener,
+        AppDialog.DialogEvents {
     private static final String TAG = "MainActivity";
     public static final int DIALOG_ID_DELETE = 1;
     public static final int DIALOG_ID_CANCEL_EDIT = 2;
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
                 planAddEditRequest(null);
                 break;
             case R.id.action_add_workout:
-                workoutAddEditRequest(null);
+                workoutEditRequest(null);
                 break;
         }
 
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
     }
 
     private void planAddEditRequest(WorkoutPlan workoutPlan) {
-        Log.d(TAG, "workoutAddEditRequest - Starts");
+        Log.d(TAG, "workoutEditRequest - Starts");
         {
 
             // Starts the detail activity for the selected Item
@@ -65,8 +69,8 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
         }
     }
 
-    private void workoutAddEditRequest(Workout workout) {
-        Log.d(TAG, "workoutAddEditRequest - Starts");
+    private void workoutEditRequest(Workout workout) {
+        Log.d(TAG, "workoutEditRequest - Starts");
         {
             Intent detailIntent = new Intent(this, AddEditWorkoutActivity.class);
             if (workout != null) {
@@ -81,21 +85,80 @@ public class MainActivity extends AppCompatActivity  implements WorkoutArrayAdap
 
     @Override
     public void onEditClick(Workout workout) {
-        workoutAddEditRequest(workout);
+        workoutEditRequest(workout);
     }
 
     @Override
-    public void onDeleteClick(final Workout workout) {
+    public void onDeleteClick(Workout workout) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(workout.getCalendar());
+
+        String day = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        String month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.ENGLISH);
+        int year = calendar.get(Calendar.YEAR);
+        // Creating workoutDate String, to display in dialog message.
+        String workoutDate = day + " " + dayOfMonth + " - " + month + ", " + year;
+
         AppDialog appDialog = new AppDialog();
         Bundle args = new Bundle();
 
         args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE);
-        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldialog_message, workout.getId(), workout.getCalendar()));
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldialog_message, workoutDate));
         args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldialog_positive_caption);
 
         args.putLong("WorkoutId", workout.getId());
-
+        args.putString("ExerciseIds", workout.getExercises());
         appDialog.setArguments(args);
         appDialog.show(getFragmentManager(), null);
     }
+
+    @Override
+    public void onPositiveDialogResult(int dialogId, Bundle args) {
+        Log.d(TAG, "onPositiveDialogResult - Called");
+        switch (dialogId) {
+            case DIALOG_ID_DELETE:
+                // Deleting Exercises
+                String exercisesFound = args.getString("ExerciseIds");
+                // If we have found any exercises from the Cursor
+                if (exercisesFound != null && !exercisesFound.equals("")) {
+                    // Splits the found exercises by the "," split.
+                    String[] exercisesIdSplitArray = exercisesFound.split(",");
+
+                    for (String exerciseToParse : exercisesIdSplitArray) {
+                        int exerciseID = Integer.parseInt(exerciseToParse);
+                        getContentResolver().delete(ExercisesContract.buildExerciseUri(exerciseID), null, null);
+                    }
+                }
+
+                // Deleting Workout
+                Long workoutId = args.getLong("WorkoutId");
+                if (BuildConfig.DEBUG && workoutId == 0) {
+                    throw new AssertionError("Task ID is zero");
+                }
+                getContentResolver().delete(WorkoutsContract.buildWorkoutUri(workoutId), null, null);
+                break;
+            case DIALOG_ID_CANCEL_EDIT:
+                // Edit is used, no action is required.
+                break;
+        }
+    }
+
+    @Override
+    public void onNegativeDialogResult(int dialogId, Bundle args) {
+        Log.d(TAG, "onNegativeDialogResult - Called");
+        switch (dialogId) {
+            case DIALOG_ID_DELETE:
+                break;
+            case DIALOG_ID_CANCEL_EDIT:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onDialogCancelled(int dialogId) {
+        Log.d(TAG, "onDialogCancelled - Called");
+    }
+
 }

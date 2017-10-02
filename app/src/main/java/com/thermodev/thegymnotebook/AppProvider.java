@@ -225,21 +225,21 @@ public class AppProvider extends ContentProvider {
                 count = db.delete(ExercisesContract.TABLE_NAME, selectionCriteria, selectionArgs);
                 break;
 
-//            case WORKOUTS:
-//                db = mOpenHelper.getWritableDatabase();
-//                count = db.delete(WorkoutsContract.TABLE_NAME, selection, selectionArgs);
-//                break;
-//
-//            case WORKOUTS_ID:
-//                db = mOpenHelper.getWritableDatabase();
-//                long workoutId = WorkoutsContract.getWorkoutId(uri);
-//                selectionCriteria = WorkoutsContract.Columns._ID + " = " + workoutId;
-//
-//                if((selection != null) && (selection.length()>0)) {
-//                    selectionCriteria += " AND (" + selection + ")";
-//                }
-//                count = db.delete(WorkoutsContract.TABLE_NAME, selectionCriteria, selectionArgs);
-//                break;
+            case WORKOUTS:
+                db = mOpenHelper.getWritableDatabase();
+                count = db.delete(WorkoutsContract.TABLE_NAME, selection, selectionArgs);
+                break;
+
+            case WORKOUTS_ID:
+                db = mOpenHelper.getWritableDatabase();
+                long workoutId = WorkoutsContract.getWorkoutId(uri);
+                selectionCriteria = WorkoutsContract.Columns._ID + " = " + workoutId;
+
+                if((selection != null) && (selection.length()>0)) {
+                    selectionCriteria += " AND (" + selection + ")";
+                }
+                count = db.delete(WorkoutsContract.TABLE_NAME, selectionCriteria, selectionArgs);
+                break;
 
 //            case WORKOUT_PLANS:
 //                db = mOpenHelper.getWritableDatabase();
@@ -301,21 +301,21 @@ public class AppProvider extends ContentProvider {
                 count = db.update(ExercisesContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
                 break;
 
-//            case WORKOUTS:
-//                db = mOpenHelper.getWritableDatabase();
-//                count = db.update(WorkoutsContract.TABLE_NAME, values, selection, selectionArgs);
-//                break;
-//
-//            case WORKOUTS_ID:
-//                db = mOpenHelper.getWritableDatabase();
-//                long workoutId = WorkoutsContract.getWorkoutId(uri);
-//                selectionCriteria = WorkoutsContract.Columns._ID + " = " + workoutId;
-//
-//                if((selection != null) && (selection.length()>0)) {
-//                    selectionCriteria += " AND (" + selection + ")";
-//                }
-//                count = db.update(WorkoutsContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
-//                break;
+            case WORKOUTS:
+                db = mOpenHelper.getWritableDatabase();
+                count = db.update(WorkoutsContract.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case WORKOUTS_ID:
+                db = mOpenHelper.getWritableDatabase();
+                long workoutId = WorkoutsContract.getWorkoutId(uri);
+                selectionCriteria = WorkoutsContract.Columns._ID + " = " + workoutId;
+
+                if((selection != null) && (selection.length()>0)) {
+                    selectionCriteria += " AND (" + selection + ")";
+                }
+                count = db.update(WorkoutsContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
+                break;
 
 //            case WORKOUT_PLANS:
 //                db = mOpenHelper.getWritableDatabase();

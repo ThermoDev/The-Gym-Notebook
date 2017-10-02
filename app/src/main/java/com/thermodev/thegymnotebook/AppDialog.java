@@ -22,6 +22,7 @@ public class AppDialog extends DialogFragment {
 
     /**
      * Dialogue's callback interface to notify user of selected results (delete confirmed, etc.)
+     * This must be implemented, if any activity wishes to access this class.
      */
     interface DialogEvents {
         void onPositiveDialogResult(int dialogId, Bundle args);

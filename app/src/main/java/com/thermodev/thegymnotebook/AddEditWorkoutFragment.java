@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,17 +40,27 @@ import static com.thermodev.thegymnotebook.MainActivityFragment.workoutList;
  * Created by Thermolink on 26-Jul-17.
  */
 
-public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
+public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
     private static final String TAG = "AddEditWorkoutFragment";
     private Button mDateButton;
-    private Button mAddButton;
+    private Button mAddEditButton;
     private Button mAddExerciseButton;
     private ListView mListView;
     private ExerciseArrayAdapter mExerciseArrayAdapter;
     List<Exercise> mExerciseList;
     private Calendar mCalendar;
 
+    private Workout argumentWorkout;
+
+    public enum FragmentMode {EDIT, ADD}
+
+    private FragmentMode mFragmentMode;
+
     public static final int LOADER_ID = 0;
+
+    interface OnSaveClicked {
+        void onSaveClicked();
+    }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -65,7 +76,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
         mDateButton = (Button) view.findViewById(R.id.add_edit_date_button);
         mListView = (ListView) view.findViewById(R.id.add_edit_listview);
-        mAddButton = (Button) view.findViewById(R.id.add_edit_commit_button);
+        mAddEditButton = (Button) view.findViewById(R.id.add_edit_commit_button);
         mAddExerciseButton = (Button) view.findViewById(R.id.add_edit_exercise_button);
         mExerciseList = new ArrayList<>();
         mCalendar = Calendar.getInstance();
@@ -75,6 +86,96 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
         mListView.setAdapter(mExerciseArrayAdapter);
 
+        Bundle arguments = getArguments();
+
+        // If arguments were parsed to this fragment
+        if (arguments != null) {
+            Log.d(TAG, "onCreateView: Found arguments for Workout");
+            // Create workout from the parsed arguments.
+            argumentWorkout = (Workout) arguments.getSerializable(Workout.class.getSimpleName());
+            if (argumentWorkout != null) {
+                Log.d(TAG, "onCreateView: Workout was found. Editing the data.");
+                mFragmentMode = FragmentMode.EDIT;
+                mAddEditButton.setText(R.string.update_workout_button);
+
+                // -Adding date-
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(argumentWorkout.getCalendar());
+
+                int workoutDay = calendar.get(Calendar.DAY_OF_MONTH);
+                int workoutMonth = calendar.get(Calendar.MONTH);
+                int workoutYear = calendar.get(Calendar.YEAR);
+                mDateButton.setText(workoutDay + " / " + (workoutMonth + 1) + " / " + workoutYear);
+                mCalendar.set(workoutYear, workoutMonth, workoutDay);
+
+
+                // -Adding Exercise-
+                String exercises = argumentWorkout.getExercises();
+                // If there were any exercises found.
+                if (exercises != null) {
+                    Log.d(TAG, "onCreateView: Exercises were found");
+                    Log.d(TAG, "onCreateView: " + exercises);
+                    String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
+                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS};
+
+                    AppProvider appProvider = new AppProvider();
+
+                    // -- Setting up the WHERE clause for CursorLoader, splitting id's already provided by "," in the db --
+
+                    // Splits the found exercises by the "," split.
+                    String[] exercisesIdSplitArray = exercises.split(",");
+
+                    // Initialize empty string in exercisesToFind
+                    String exercisesToFind = "";
+
+                    // If the found split exercises ID is greater than one, meaning there is more than one item in the array:
+                    if (exercisesIdSplitArray.length > 1) {
+
+                        // If the split array of the ID
+                        exercisesToFind = ExercisesContract.Columns._ID + " IN (" + exercises + ")";
+                        Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
+
+                    } else {
+                        if (!exercises.isEmpty()) {
+                            exercisesToFind = ExercisesContract.Columns._ID + " = " + exercises.replace(",", "");
+                            Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
+                        }
+                    }
+                    if(!exercisesToFind.equals("")){
+                        // Creating a cursor loader
+                        Cursor exerciseCursor = appProvider.query(ExercisesContract.CONTENT_URI, projection, exercisesToFind, null, null);
+
+                        // If there is a currently usable exerciseCursor
+                        if (exerciseCursor != null) {
+                            // Checks if any Exercises were found
+                            if (exerciseCursor.getCount() != 0) {
+                                // Loops through all of the exercises found, then adds it to the exercise list.
+                                while (exerciseCursor.moveToNext()) {
+                                    Exercise exerciseToAdd = new Exercise(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
+                                    exerciseToAdd.setSets(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS))));
+                                    exerciseToAdd.setReps(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS))));
+                                    mExerciseList.add(exerciseToAdd);
+                                    mExerciseArrayAdapter.add(exerciseToAdd);
+                                }
+                                mExerciseArrayAdapter.notifyDataSetChanged();
+                            }
+                            Log.d(TAG, "onCreateView: Workout ID " + argumentWorkout.getId());
+                            exerciseCursor.close();
+                        } else {
+                            Log.d(TAG, "onBindViewHolder: Exercise Cursor returned null");
+                        }
+                    }
+                }
+            }
+        } else {
+            Log.d(TAG, "onCreateView: No Arguments, adding new record.");
+            // No Workout parsed, will be adding
+            mFragmentMode = FragmentMode.ADD;
+        }
+
+
+
+
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +184,6 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 int day = mCalendar.get(Calendar.DAY_OF_MONTH);
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), datePickerListener, year, month, day);
                 datePickerDialog.show();
-                int dayOfMonth = datePickerDialog.getDatePicker().getDayOfMonth();
-
             }
         });
         mAddExerciseButton.setOnClickListener(new View.OnClickListener() {
@@ -137,8 +236,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
 
                                             Exercise newExercise = new Exercise(input.getText().toString());
 
-                                            // Adding values to database
-
+                                            // Adding values to newExercise object.
                                             newExercise.setSets(npSets.getValue());
                                             newExercise.setReps(npReps.getValue());
 
@@ -170,14 +268,13 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 builder.show();
             }
         });
-        mAddButton.setOnClickListener(new View.OnClickListener() {
+        mAddEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Successfully added workout...", Toast.LENGTH_SHORT).show();
-                Workout workout = new Workout( getId(), mCalendar.getTime().toString());
-                if(!mExerciseList.isEmpty()) {
+                Workout workout = new Workout(getId(), mCalendar.getTimeInMillis());
+                if (!mExerciseList.isEmpty()) {
                     String description = "";
-                    for(Exercise ex : mExerciseList){
+                    for (Exercise ex : mExerciseList) {
                         description += (ex.getName() + " : " + ex.getSets() + "/" + ex.getReps() + "\n");
                     }
                     workout.setDescription(description);
@@ -189,35 +286,87 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 //Creating exerciseValues
                 ContentValues exerciseValues = new ContentValues();
                 String exercisesId = "";
-                //Inserting into exerciseValues, each exercise
-                for(int i = 0; i < mExerciseList.size();i++ ){
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName() );
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps() );
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets() );
-                    // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
-                    Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
-                    exercisesId += ContentUris.parseId(exerciseUri);
-                    // Adds commas if it is not the last item in the list
-                    if(mExerciseList.size() -1 != i) {
-                        exercisesId += ",";
-                    }
-                    exerciseValues.clear();
+
+                switch (mFragmentMode){
+                    case ADD:
+                        //Inserting into exerciseValues, each exercise
+                        for (int i = 0; i < mExerciseList.size(); i++) {
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets());
+                            // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
+                            Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
+                            exercisesId += ContentUris.parseId(exerciseUri);
+                            // Adds commas if it is not the last item in the list
+                            if (mExerciseList.size() - 1 != i) {
+                                exercisesId += ",";
+                            }
+                            exerciseValues.clear();
+                        }
+
+
+                        Log.d(TAG, "onClick: Exercise ID: " + exercisesId);
+
+                        values.put(WorkoutsContract.Columns.START_DATE, mCalendar.getTimeInMillis());
+                        values.put(WorkoutsContract.Columns.WORKOUT_DESCRIPTION, workout.getDescription());
+                        values.put(WorkoutsContract.Columns.WORKOUT_EXERCISES, exercisesId);
+
+                        Uri uri = contentResolver.insert(WorkoutsContract.CONTENT_URI, values);
+
+                        ContentUris.parseId(uri);
+                        workoutList.add(workout);
+                        Toast.makeText(getContext(), "Successfully added workout...", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                        break;
+                    case EDIT:
+
+                        // Deleting current exercises
+                        String exercisesFound = argumentWorkout.getExercises();
+                        // If we have found any exercises from the Cursor
+                        if (exercisesFound != null && !exercisesFound.equals("")) {
+                            Log.d(TAG, "onClick: Found Exercises");
+                            // Splits the found exercises by the "," split.
+                            String[] exercisesIdSplitArray = exercisesFound.split(",");
+
+                            for (String exerciseToParse : exercisesIdSplitArray) {
+                                int exerciseID = Integer.parseInt(exerciseToParse);
+                                Log.d(TAG, "onClick: Exercise ID: " + exerciseID);
+                                contentResolver.delete(ExercisesContract.buildExerciseUri(exerciseID), null, null);
+                            }
+                        }
+
+
+                        for (int i = 0; i < mExerciseList.size(); i++) {
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets());
+
+                            Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
+                            exercisesId += ContentUris.parseId(exerciseUri);
+                            // Adds commas if it is not the last item in the list
+                            if (mExerciseList.size() - 1 != i) {
+                                exercisesId += ",";
+                            }
+                            exerciseValues.clear();
+
+                        }
+
+                        values.put(WorkoutsContract.Columns.START_DATE, mCalendar.getTimeInMillis());
+                        values.put(WorkoutsContract.Columns.WORKOUT_DESCRIPTION, workout.getDescription());
+                        values.put(WorkoutsContract.Columns.WORKOUT_EXERCISES, exercisesId);
+
+
+                        // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
+                        if(argumentWorkout != null) {
+                            Log.d(TAG, "onClick: Workout ID:" + argumentWorkout.getId());
+                            int id = contentResolver.update(WorkoutsContract.buildWorkoutUri(argumentWorkout.getId()), values, null, null);
+                        }
+                        Toast.makeText(getContext(), "Successfully updated workout...", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                        values.clear();
                 }
 
 
-
-                Log.d(TAG, "onClick: Exercise ID: " + exercisesId);
-
-                values.put(WorkoutsContract.Columns.START_DATE, mCalendar.getTime().toString());
-                values.put(WorkoutsContract.Columns.WORKOUT_DESCRIPTION, workout.getDescription());
-                values.put(WorkoutsContract.Columns.WORKOUT_EXERCISES, exercisesId);
-
-                Uri uri = contentResolver.insert(WorkoutsContract.CONTENT_URI, values);
-
-                ContentUris.parseId(uri);
-
-                workoutList.add(workout);
-                getActivity().finish();
             }
         });
 
@@ -227,8 +376,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
     // This will occur after the date has been picked.
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-            mDateButton.setText(selectedDay + " / " + (selectedMonth + 1) + " / "
-                    + selectedYear);
+            mDateButton.setText(selectedDay + " / " + (selectedMonth + 1) + " / " + selectedYear);
             mCalendar.set(selectedYear, selectedMonth, selectedDay);
         }
     };
@@ -257,7 +405,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                         planList.add(currentPlan.getName());
                         Log.d(TAG, "onOptionsItemSelected - currentPlan: " + currentPlan.getName());
                     }
-                }else{
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(R.string.no_plans_found)
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -309,20 +457,19 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                                 Toast.makeText(getContext(), "Successfully Cleared...", Toast.LENGTH_SHORT).show();
                             }
                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
                         .show();
-               break;
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
     }
-
 
 
 }
