@@ -3,8 +3,10 @@ package com.thermodev.thegymnotebook;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -154,34 +157,67 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
 //                Log.d(TAG, "onClick: " + mExerciseAdapter.getCount());
 //                Log.d(TAG, "onClick: " + exerciseList.size());
 
-//                WorkoutPlan workoutPlan = new WorkoutPlan(getId(), mNameText.getText().toString(), mDescriptionText.getText().toString(), );
+String                sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME + "("
+                        + WorkoutPlansContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, "
+                        + WorkoutPlansContract.Columns.WORKOUT_NAME + " TEXT NOT NULL, "
+                        + WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION + " TEXT, "
+                        + " FOREIGN KEY (" + WorkoutPlansContract.Columns.WORKOUT_EXERCISES + ") REFERENCES " + ExercisesContract.TABLE_NAME + "("+ ExercisesContract.Columns._ID+ ")" + ");";
+                Log.d(TAG, "onClick: " +sSQL);
+
+
+                WorkoutPlan workoutPlan = new WorkoutPlan(getId(), mNameText.getText().toString(), mDescriptionText.getText().toString());
 
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 ContentValues values = new ContentValues();
                 values.put(WorkoutPlansContract.Columns.WORKOUT_NAME, mNameText.getText().toString());
                 values.put(WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION, mDescriptionText.getText().toString());
 
+                String exercisesId = "";
 
-                for(Exercise exercise : exerciseList){
-                    values.put(ExercisesContract.Columns.EXERCISES_NAME, exercise.getName());
-                    values.put(ExercisesContract.Columns.EXERCISES_SETS, exercise.getSets());
-                    values.put(ExercisesContract.Columns.EXERCISES_REPS, exercise.getReps());
+                ContentValues exerciseValues = new ContentValues();
+
+                for (int i = 0; i < exerciseList.size(); i++) {
+
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, exerciseList.get(i).getName());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, exerciseList.get(i).getReps());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, exerciseList.get(i).getSets());
+                    // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
+                    Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
+                    exercisesId += ContentUris.parseId(exerciseUri);
+                    // Adds commas if it is not the last item in the list
+                    if (exerciseList.size() - 1 != i) {
+                        exercisesId += ",";
+                    }
+                    exerciseValues.clear();
                 }
+
+
+                Log.d(TAG, "onClick: Exercise ID: " + exercisesId);
+
+                values.put(WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION, workoutPlan.getDescription());
+                values.put(WorkoutPlansContract.Columns.WORKOUT_EXERCISES, exercisesId);
+
+                Uri uri = contentResolver.insert(WorkoutPlansContract.CONTENT_URI, values);
+
+                ContentUris.parseId(uri);
+                tempWorkoutPlans.add(workoutPlan);
+                Toast.makeText(getContext(), "Successfully added workout plan...", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+
+//                for(Exercise exercise : exerciseList){
+//                    values.put(ExercisesContract.Columns.EXERCISES_NAME, exercise.getName());
+//                    values.put(ExercisesContract.Columns.EXERCISES_SETS, exercise.getSets());
+//                    values.put(ExercisesContract.Columns.EXERCISES_REPS, exercise.getReps());
+//                }
 //                if(!mDescriptionText.equals(null)){
 //                    workoutPlan.setDescription(mDescriptionText.getText().toString());
 //                }
 //                workoutPlan.setExercises(exerciseList);
-
+//
 //                tempWorkoutPlans.add(workoutPlan);
-                contentResolver.insert(ExercisesContract.CONTENT_URI, values);
 
-                for(WorkoutPlan plan : tempWorkoutPlans){
-                    Log.d(TAG, "onClick: Workout Plan " + plan.getName());
-                    for(Exercise exercise : plan.getExercises()){
-                        Log.d(TAG, "onClick: " + exercise.getName());
-                    }
+//                contentResolver.insert(WorkoutPlansContract.CONTENT_URI, values);
 
-                }
 
 
                 getActivity().finish();

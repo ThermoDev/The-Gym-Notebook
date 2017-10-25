@@ -1,21 +1,26 @@
 package com.thermodev.thegymnotebook;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by user on 01-Aug-17.
  */
 
-public class WorkoutPlan implements Serializable {
+class WorkoutPlan implements Serializable {
     public static final long serialVersionUID = 20170917;
 
     private long m_Id;
-    private final String mName;
-    private final String mDescription;
-    private final List<Exercise> mExercises;
+    private String mName;
+    private String mDescription;
+    private String mExercises;
 
-    public WorkoutPlan(long id, String name, String description, List<Exercise> exercises) {
+    public WorkoutPlan(long id, String name, String description) {
+        this.m_Id = id;
+        this.mName = name;
+        this.mDescription = description;
+    }
+
+    public WorkoutPlan(long id, String name, String description, String exercises) {
         this.m_Id = id;
         this.mName = name;
         this.mDescription = description;
@@ -30,7 +35,7 @@ public class WorkoutPlan implements Serializable {
         return mDescription;
     }
 
-    public List<Exercise> getExercises() {
+    public String getExercises() {
         return mExercises;
     }
 
@@ -40,5 +45,26 @@ public class WorkoutPlan implements Serializable {
 
     public void setId(long id) {
         this.m_Id = id;
+    }
+
+
+    public long getM_Id() {
+        return m_Id;
+    }
+
+    public void setM_Id(long m_Id) {
+        this.m_Id = m_Id;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
+
+    public void setExercises(String exercises) {
+        mExercises = exercises;
     }
 }

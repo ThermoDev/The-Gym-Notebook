@@ -12,14 +12,14 @@ import static com.thermodev.thegymnotebook.AppProvider.CONTENT_AUTHORITY_URI;
  */
 
 public class WorkoutPlansContract {
-    static final String TABLE_NAME = "Workouts";
+    static final String TABLE_NAME = "WorkoutPlans";
 
     // The WorkoutPlans Fields
     public static class Columns {
         public static final String _ID = BaseColumns._ID;
         public static final String WORKOUT_NAME = "Name";
         public static final String WORKOUT_DESCRIPTION = "Description";
-        public static final String EXCERISE_ID = "ExerciseID";
+        public static final String WORKOUT_EXERCISES = "Exercises";
 
         private Columns(){
             // Private Constructor to prevent accidental instantiation :)

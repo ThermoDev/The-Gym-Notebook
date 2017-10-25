@@ -42,19 +42,21 @@ class AppDatabase extends SQLiteOpenHelper {
 
         return instance;
     }
+
+    /**
+     * This is used to instantiate the databases.
+     * @param db
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate: starts");
         String sSQL;    // Use a string variable to facilitate logging
-
-        /* TODO: Create other tables for Workout & WorkoutPlan */
 
         sSQL = "CREATE TABLE " + ExercisesContract.TABLE_NAME + " ("
                 + ExercisesContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, "
                 + ExercisesContract.Columns.EXERCISES_NAME + " TEXT NOT NULL, "
                 + ExercisesContract.Columns.EXERCISES_SETS + " INTEGER, "
                 + ExercisesContract.Columns.EXERCISES_REPS + " INTEGER);";
-        Log.d(TAG, sSQL);
         db.execSQL(sSQL);
 
         sSQL = "CREATE TABLE " + WorkoutsContract.TABLE_NAME + " ("
@@ -62,8 +64,17 @@ class AppDatabase extends SQLiteOpenHelper {
                 + WorkoutsContract.Columns.START_DATE + " TEXT NOT NULL, "
                 + WorkoutsContract.Columns.WORKOUT_NAME+ " TEXT, "
                 + WorkoutsContract.Columns.WORKOUT_DESCRIPTION+ " TEXT, "
-                + WorkoutsContract.Columns.WORKOUT_EXERCISES + " INTEGER,"
-                + " FOREIGN KEY (" + WorkoutsContract.Columns.WORKOUT_EXERCISES + ") REFERENCES " + ExercisesContract.TABLE_NAME + "("+ ExercisesContract.Columns._ID+ ")" + ");";
+                + WorkoutsContract.Columns.WORKOUT_EXERCISES + " INTEGER, "
+                + "FOREIGN KEY (" + WorkoutsContract.Columns.WORKOUT_EXERCISES + ") REFERENCES " + ExercisesContract.TABLE_NAME + "("+ ExercisesContract.Columns._ID+ ")" + ");";
+        db.execSQL(sSQL);
+
+        sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME + "("
+                + WorkoutPlansContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, "
+                + WorkoutPlansContract.Columns.WORKOUT_NAME + " TEXT NOT NULL, "
+                + WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION + " TEXT, "
+                + WorkoutPlansContract.Columns.WORKOUT_EXERCISES + " INTEGER, "
+                + "FOREIGN KEY (" + WorkoutPlansContract.Columns.WORKOUT_EXERCISES + ") REFERENCES " + ExercisesContract.TABLE_NAME + "("+ ExercisesContract.Columns._ID+ ")" + ");";
+
         db.execSQL(sSQL);
 
         Log.d(TAG, "onCreate: ends");

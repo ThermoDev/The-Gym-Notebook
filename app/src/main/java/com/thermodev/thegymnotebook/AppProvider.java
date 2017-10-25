@@ -44,8 +44,8 @@ public class AppProvider extends ContentProvider {
         matcher.addURI(CONTENT_AUTHORITY, WorkoutsContract.TABLE_NAME, WORKOUTS);
         matcher.addURI(CONTENT_AUTHORITY, WorkoutsContract.TABLE_NAME + "/#", WORKOUTS_ID);
 
-//        matcher.addURI(CONTENT_AUTHORITY, WorkoutPlansContract.TABLE_NAME, WORKOUT_PLANS);
-//        matcher.addURI(CONTENT_AUTHORITY, WorkoutPlansContract.TABLE_NAME + "/#", WORKOUT_PLANS_ID);
+        matcher.addURI(CONTENT_AUTHORITY, WorkoutPlansContract.TABLE_NAME, WORKOUT_PLANS);
+        matcher.addURI(CONTENT_AUTHORITY, WorkoutPlansContract.TABLE_NAME + "/#", WORKOUT_PLANS_ID);
 
         return matcher;
     }
@@ -83,15 +83,15 @@ public class AppProvider extends ContentProvider {
                 queryBuilder.appendWhere(WorkoutsContract.Columns._ID + " = " + workoutId);
                 break;
 
-//            case WORKOUT_PLANS:
-//                queryBuilder.setTables(WorkoutPlansContract.TABLE_NAME);
-//                break;
+            case WORKOUT_PLANS:
+                queryBuilder.setTables(WorkoutPlansContract.TABLE_NAME);
+                break;
 
-//            case WORKOUT_PLANS_ID:
-//                queryBuilder.setTables(WorkoutPlansContract.TABLE_NAME);
-//                long workoutPlanId = WorkoutPlansContract.getWorkoutPlanId(uri);
-//                queryBuilder.appendWhere(WorkoutPlansContract.Columns._ID + " = " + workoutPlanId);
-//                break;
+            case WORKOUT_PLANS_ID:
+                queryBuilder.setTables(WorkoutPlansContract.TABLE_NAME);
+                long workoutPlanId = WorkoutPlansContract.getWorkoutPlanId(uri);
+                queryBuilder.appendWhere(WorkoutPlansContract.Columns._ID + " = " + workoutPlanId);
+                break;
 
             default:
                 throw new IllegalArgumentException("Unable to identify URI: " + uri);
@@ -125,12 +125,12 @@ public class AppProvider extends ContentProvider {
 
             case WORKOUTS_ID:
                 return WorkoutsContract.CONTENT_ITEM_TYPE;
-//
-//            case WORKOUT_PLANS:
-//                return DurationsContract.WorkoutPlans.CONTENT_TYPE;
-//
-//            case WORKOUT_PLANS_ID:
-//                return DurationsContract.WorkoutPlans.CONTENT_ITEM_TYPE;
+
+            case WORKOUT_PLANS:
+                return WorkoutPlansContract.CONTENT_TYPE;
+
+            case WORKOUT_PLANS_ID:
+                return WorkoutPlansContract.CONTENT_ITEM_TYPE;
 
             default:
                 throw new IllegalArgumentException("Unable to identify URI: " + uri);
@@ -171,14 +171,14 @@ public class AppProvider extends ContentProvider {
                 break;
 
             case WORKOUT_PLANS:
-//                db = mOpenHelper.getWritableDatabase();
-//                recordId = db.insert(WorkoutPlansContract.TABLE_NAME, null, values);
-//                if(recordId >=0) {
-//                    returnUri = WorkoutPlansContract.Workouts.buildWorkoutUri(recordId);
-//                } else {
-//                    throw new android.database.SQLException("Failed to insert into " + uri.toString());
-//                }
-//                break;
+                db = mOpenHelper.getWritableDatabase();
+                recordId = db.insert(WorkoutPlansContract.TABLE_NAME, null, values);
+                if(recordId >=0) {
+                    returnUri = WorkoutPlansContract.buildWorkoutPlanUri(recordId);
+                } else {
+                    throw new android.database.SQLException("Failed to insert into " + uri.toString());
+                }
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -241,21 +241,21 @@ public class AppProvider extends ContentProvider {
                 count = db.delete(WorkoutsContract.TABLE_NAME, selectionCriteria, selectionArgs);
                 break;
 
-//            case WORKOUT_PLANS:
-//                db = mOpenHelper.getWritableDatabase();
-//                count = db.delete(WorkoutPlansContract.TABLE_NAME, selection, selectionArgs);
-//                break;
-//
-//            case WORKOUT_PLANS_ID:
-//                db = mOpenHelper.getWritableDatabase();
-//                long workoutPlanId = WorkoutPlansContract.getWorkoutId(uri);
-//                selectionCriteria = WorkoutPlansContract.Columns._ID + " = " + workoutPlanId;
-//
-//                if((selection != null) && (selection.length()>0)) {
-//                    selectionCriteria += " AND (" + selection + ")";
-//                }
-//                count = db.delete(WorkoutPlansContract.TABLE_NAME, selectionCriteria, selectionArgs);
-//                break;
+            case WORKOUT_PLANS:
+                db = mOpenHelper.getWritableDatabase();
+                count = db.delete(WorkoutPlansContract.TABLE_NAME, selection, selectionArgs);
+                break;
+
+            case WORKOUT_PLANS_ID:
+                db = mOpenHelper.getWritableDatabase();
+                long workoutPlanId = WorkoutPlansContract.getWorkoutPlanId(uri);
+                selectionCriteria = WorkoutPlansContract.Columns._ID + " = " + workoutPlanId;
+
+                if((selection != null) && (selection.length()>0)) {
+                    selectionCriteria += " AND (" + selection + ")";
+                }
+                count = db.delete(WorkoutPlansContract.TABLE_NAME, selectionCriteria, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
@@ -317,21 +317,21 @@ public class AppProvider extends ContentProvider {
                 count = db.update(WorkoutsContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
                 break;
 
-//            case WORKOUT_PLANS:
-//                db = mOpenHelper.getWritableDatabase();
-//                count = db.update(WorkoutPlansContract.TABLE_NAME, values, selection, selectionArgs);
-//                break;
-//
-//            case WORKOUT_PLANS_ID:
-//                db = mOpenHelper.getWritableDatabase();
-//                long workoutPlanId = WorkoutPlansContract.getWorkoutId(uri);
-//                selectionCriteria = WorkoutPlansContract.Columns._ID + " = " + workoutPlanId;
-//
-//                if((selection != null) && (selection.length()>0)) {
-//                    selectionCriteria += " AND (" + selection + ")";
-//                }
-//                count = db.update(WorkoutPlansContract.TABLE_NAME, values,  selectionCriteria, selectionArgs);
-//                break;
+            case WORKOUT_PLANS:
+                db = mOpenHelper.getWritableDatabase();
+                count = db.update(WorkoutPlansContract.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case WORKOUT_PLANS_ID:
+                db = mOpenHelper.getWritableDatabase();
+                long workoutPlanId = WorkoutPlansContract.getWorkoutPlanId(uri);
+                selectionCriteria = WorkoutPlansContract.Columns._ID + " = " + workoutPlanId;
+
+                if((selection != null) && (selection.length()>0)) {
+                    selectionCriteria += " AND (" + selection + ")";
+                }
+                count = db.update(WorkoutPlansContract.TABLE_NAME, values,  selectionCriteria, selectionArgs);
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
