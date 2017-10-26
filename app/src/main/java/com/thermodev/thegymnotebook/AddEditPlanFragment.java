@@ -39,8 +39,6 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
     private ExerciseArrayAdapter mExerciseAdapter;
     public static ArrayList<Exercise> mExerciseList;
 
-    //TODO: Remove tempWorkoutPlans after a database is implemented.
-    public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
 
 //    private CursorRecyclerViewAdapter mAdapter; // Add Adapter Reference
 
@@ -198,7 +196,6 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
                 Uri uri = contentResolver.insert(WorkoutPlansContract.CONTENT_URI, values);
 
                 ContentUris.parseId(uri);
-                tempWorkoutPlans.add(workoutPlan);
                 Toast.makeText(getContext(), "Successfully added workout plan...", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
 

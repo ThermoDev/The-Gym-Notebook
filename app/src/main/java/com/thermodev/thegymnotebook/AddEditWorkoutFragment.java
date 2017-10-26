@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.thermodev.thegymnotebook.AddEditPlanFragment.tempWorkoutPlans;
 import static com.thermodev.thegymnotebook.MainActivityFragment.workoutList;
 
 /**
@@ -115,56 +114,12 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 if (exercises != null) {
                     Log.d(TAG, "onCreateView: Exercises were found");
                     Log.d(TAG, "onCreateView: " + exercises);
-                    String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
-                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS, ExercisesContract.Columns.EXERCISES_WEIGHTS};
 
-                    AppProvider appProvider = new AppProvider();
-
-                    // -- Setting up the WHERE clause for CursorLoader, splitting id's already provided by "," in the db --
-
-                    // Splits the found exercises by the "," split.
-                    String[] exercisesIdSplitArray = exercises.split(",");
-
-                    // Initialize empty string in exercisesToFind
-                    String exercisesToFind = "";
-
-                    // If the found split exercises ID is greater than one, meaning there is more than one item in the array:
-                    if (exercisesIdSplitArray.length > 1) {
-
-                        // If the split array of the ID
-                        exercisesToFind = ExercisesContract.Columns._ID + " IN (" + exercises + ")";
-                        Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
-
-                    } else {
-                        if (!exercises.isEmpty()) {
-                            exercisesToFind = ExercisesContract.Columns._ID + " = " + exercises.replace(",", "");
-                            Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
-                        }
-                    }
-                    if(!exercisesToFind.equals("")){
-                        // Creating a cursor loader
-                        Cursor exerciseCursor = appProvider.query(ExercisesContract.CONTENT_URI, projection, exercisesToFind, null, null);
-
-                        // If there is a currently usable exerciseCursor
-                        if (exerciseCursor != null) {
-                            // Checks if any Exercises were found
-                            if (exerciseCursor.getCount() != 0) {
-                                // Loops through all of the exercises found, then adds it to the exercise list.
-                                while (exerciseCursor.moveToNext()) {
-                                    Exercise exerciseToAdd = new Exercise(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
-                                    exerciseToAdd.setSets(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS))));
-                                    exerciseToAdd.setReps(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS))));
-                                    exerciseToAdd.setWeights(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_WEIGHTS))));
-                                    mExerciseList.add(exerciseToAdd);
-                                    mExerciseArrayAdapter.add(exerciseToAdd);
-                                }
-                                mExerciseArrayAdapter.notifyDataSetChanged();
-                            }
-                            Log.d(TAG, "onCreateView: Workout ID " + argumentWorkout.getId());
-                            exerciseCursor.close();
-                        } else {
-                            Log.d(TAG, "onBindViewHolder: Exercise Cursor returned null");
-                        }
+                    // Retrieves exercises by the String
+                    List<Exercise> exercisesList = retrieveExercisesByString(exercises);
+                    if(exercisesList != null) {
+                        mExerciseList.addAll(exercisesList);
+                        mExerciseArrayAdapter.addAll(exercisesList);
                     }
                 }
             }
@@ -402,82 +357,176 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         switch (id) {
             case R.id.menu_add_plan:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                LayoutInflater inflater = getLayoutInflater(getArguments());
-                View convertView = (View) inflater.inflate(R.layout.exercise_list_view, null);
-                alertDialog.setView(convertView);
-                alertDialog.setTitle("Select From Plan");
-                ListView dialogListView = (ListView) convertView.findViewById(R.id.exercise_list_view);
-                ArrayList<String> planList = new ArrayList<String>();
-                if (!tempWorkoutPlans.isEmpty()) {
-                    for (WorkoutPlan currentPlan : tempWorkoutPlans) {
-                        planList.add(currentPlan.getName());
-                        Log.d(TAG, "onOptionsItemSelected - currentPlan: " + currentPlan.getName());
+
+                String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
+                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS, ExercisesContract.Columns.EXERCISES_WEIGHTS};
+
+                AppProvider appProvider = new AppProvider();
+
+
+                Cursor workoutPlansCursor = appProvider.query(WorkoutPlansContract.CONTENT_URI, null, null, null, null);
+
+
+                final ArrayList<WorkoutPlan> workoutPlans = new ArrayList<>();
+
+                if (workoutPlansCursor != null) {
+                    // Checks if any Exercises were found
+                    if (workoutPlansCursor.getCount() != 0) {
+                        // Loops through all of the exercises found, then adds it to the exercise list.
+                        while (workoutPlansCursor.moveToNext()) {
+                            WorkoutPlan workoutToAdd = new WorkoutPlan(
+                                    Integer.parseInt(workoutPlansCursor.getString(workoutPlansCursor.getColumnIndex(WorkoutPlansContract.Columns._ID))),
+                                    workoutPlansCursor.getString(workoutPlansCursor.getColumnIndex(WorkoutPlansContract.Columns.WORKOUT_NAME)),
+                                    workoutPlansCursor.getString(workoutPlansCursor.getColumnIndex(WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION)));
+                            String exercises = workoutPlansCursor.getString(workoutPlansCursor.getColumnIndex(WorkoutPlansContract.Columns.WORKOUT_EXERCISES));
+                            List<Exercise> exercisesToAdd = retrieveExercisesByString(exercises);
+
+                            if(exercisesToAdd != null) {
+                                Log.d(TAG, "onOptionsItemSelected: " + exercisesToAdd.get(0).getName());
+                                workoutToAdd.setExercises(exercisesToAdd);
+                            }
+
+                            workoutPlans.add(workoutToAdd);
+                        }
                     }
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage(R.string.no_plans_found)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // FIRE ZE MISSILES!
-                                }
-                            }).show();
-                    return false;
-                }
-                String plans[] = planList.toArray(new String[0]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, plans);
-                dialogListView.setAdapter(adapter);
 
-                final Dialog myDialog = alertDialog.show();
+                    ArrayList<String> stringPlanList = new ArrayList<>();
 
-                dialogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Log.d(TAG, "onItemClick - Postion: " + position);
+
+                    LayoutInflater inflater = getLayoutInflater(getArguments());
+                    View convertView = (View) inflater.inflate(R.layout.exercise_list_view, null);
+                    alertDialog.setView(convertView);
+                    alertDialog.setTitle("Select From Plan");
+                    ListView dialogListView = (ListView) convertView.findViewById(R.id.exercise_list_view);
+                    if (!workoutPlans.isEmpty()) {
+                        for (WorkoutPlan currentPlan : workoutPlans) {
+                            stringPlanList.add(currentPlan.getName());
+                            Log.d(TAG, "onOptionsItemSelected - currentPlan: " + currentPlan.getName());
+                        }
+
+
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(R.string.no_plans_found)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // FIRE ZE MISSILES!
+                                    }
+                                }).show();
+                        return false;
+                    }
+                    String plans[] = stringPlanList.toArray(new String[0]);
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, plans);
+                    dialogListView.setAdapter(adapter);
+
+                    final Dialog myDialog = alertDialog.show();
+
+                    dialogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Log.d(TAG, "onItemClick - Postion: " + position);
 //                        mExerciseList = tempWorkoutPlans.get(position).getExercises();
 //
 //                        for(Exercise e : tempWorkoutPlans.get(position).getExercises()){
 //                            Log.d(TAG, "onItemClick - Workout Plan Name: " + e.getName());
 //                        }
-                        for (Exercise exercise : mExerciseList) {
+                            for (Exercise exercise : workoutPlans.get(position).getExercises()) {
 //                            mExerciseList.add(exercise);
-                            mExerciseArrayAdapter.add(exercise);
-                            Log.d(TAG, "onItemClick: Name: " + exercise.getName() + " sets: " + exercise.getSets());
-                        }
-                        // Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
-                        mListView.setAdapter(mExerciseArrayAdapter);
-                        mExerciseArrayAdapter.notifyDataSetChanged();
-                        myDialog.dismiss();
-                    }
-                });
-                break;
-
-            case R.id.menu_clear:
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.confirm_clear)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mExerciseArrayAdapter.clear();
-                                mExerciseArrayAdapter.notifyDataSetChanged();
-                                mCalendar.clear();
-                                mDateButton.setText("");
-                                Toast.makeText(getContext(), "Successfully Cleared...", Toast.LENGTH_SHORT).show();
+                                mExerciseArrayAdapter.add(exercise);
+                                Log.d(TAG, "onItemClick: Name: " + exercise.getName() + " sets: " + exercise.getSets());
                             }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                        .show();
-                break;
+                            // Sets the listView adapter using the ExerciseArrayAdapter class, and appending it to list_items
+                            mListView.setAdapter(mExerciseArrayAdapter);
+                            mExerciseArrayAdapter.notifyDataSetChanged();
+                            myDialog.dismiss();
+                        }
 
-            default:
-                return super.onOptionsItemSelected(item);
+                    });
+                }
+                    break;
+
+                    case R.id.menu_clear:
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(R.string.confirm_clear)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mExerciseArrayAdapter.clear();
+                                        mExerciseArrayAdapter.notifyDataSetChanged();
+                                        mExerciseList.clear();
+                                        mCalendar.clear();
+                                        mDateButton.setText("");
+                                        Toast.makeText(getContext(), "Successfully Cleared...", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                                .show();
+                        break;
+
+                    default:
+                        return super.onOptionsItemSelected(item);
+                }
+                return true;
         }
-        return true;
-    }
 
+
+    public List<Exercise> retrieveExercisesByString(String exercises){
+        String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
+                ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS, ExercisesContract.Columns.EXERCISES_WEIGHTS};
+
+        List<Exercise> exercisesList = new ArrayList<>();
+
+        // Splits the found exercises by the "," split.
+        String[] exercisesIdSplitArray = exercises.split(",");
+
+        // Initialize empty string in exercisesToFind
+        String exercisesToFind = "";
+
+        // If the found split exercises ID is greater than one, meaning there is more than one item in the array:
+        if (exercisesIdSplitArray.length > 1) {
+
+            // If the split array of the ID
+            exercisesToFind = ExercisesContract.Columns._ID + " IN (" + exercises + ")";
+            Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
+
+        } else {
+            if (!exercises.isEmpty()) {
+                exercisesToFind = ExercisesContract.Columns._ID + " = " + exercises.replace(",", "");
+                Log.d(TAG, "onCreateView: ExerciseToFind " + exercisesToFind);
+            }
+        }
+        if(!exercisesToFind.equals("")){
+            AppProvider appProvider = new AppProvider();
+            // Creating a cursor loader
+            Cursor exerciseCursor = appProvider.query(ExercisesContract.CONTENT_URI, projection, exercisesToFind, null, null);
+
+            // If there is a currently usable exerciseCursor
+            if (exerciseCursor != null) {
+                // Checks if any Exercises were found
+                if (exerciseCursor.getCount() != 0) {
+                    // Loops through all of the exercises found, then adds it to the exercise list.
+                    while (exerciseCursor.moveToNext()) {
+                        Exercise exerciseToAdd = new Exercise(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
+                        exerciseToAdd.setSets(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS))));
+                        exerciseToAdd.setReps(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS))));
+                        exerciseToAdd.setWeights(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_WEIGHTS))));
+                        exercisesList.add(exerciseToAdd);
+                    }
+                }
+                exerciseCursor.close();
+            } else {
+                Log.d(TAG, "onBindViewHolder: Exercise Cursor returned null");
+            }
+
+    }
+        return exercisesList;
+
+}
 
 }

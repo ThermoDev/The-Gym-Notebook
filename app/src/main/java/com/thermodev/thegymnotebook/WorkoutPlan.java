@@ -1,6 +1,7 @@
 package com.thermodev.thegymnotebook;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by user on 01-Aug-17.
@@ -12,7 +13,7 @@ class WorkoutPlan implements Serializable {
     private long m_Id;
     private String mName;
     private String mDescription;
-    private String mExercises;
+    private List<Exercise> mExercises;
 
     public WorkoutPlan(long id, String name, String description) {
         this.m_Id = id;
@@ -20,7 +21,7 @@ class WorkoutPlan implements Serializable {
         this.mDescription = description;
     }
 
-    public WorkoutPlan(long id, String name, String description, String exercises) {
+    public WorkoutPlan(long id, String name, String description, List<Exercise> exercises) {
         this.m_Id = id;
         this.mName = name;
         this.mDescription = description;
@@ -35,7 +36,7 @@ class WorkoutPlan implements Serializable {
         return mDescription;
     }
 
-    public String getExercises() {
+    public List<Exercise>  getExercises() {
         return mExercises;
     }
 
@@ -47,15 +48,6 @@ class WorkoutPlan implements Serializable {
         this.m_Id = id;
     }
 
-
-    public long getM_Id() {
-        return m_Id;
-    }
-
-    public void setM_Id(long m_Id) {
-        this.m_Id = m_Id;
-    }
-
     public void setName(String name) {
         mName = name;
     }
@@ -64,7 +56,7 @@ class WorkoutPlan implements Serializable {
         mDescription = description;
     }
 
-    public void setExercises(String exercises) {
+    public void setExercises(List<Exercise>  exercises) {
         mExercises = exercises;
     }
 }
