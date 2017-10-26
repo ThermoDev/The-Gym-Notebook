@@ -53,6 +53,7 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
         TextView tvExerciseName;
         TextView tvReps;
         TextView tvSets;
+        TextView tvWeights;
 
         if (row == null) {
             Log.d(TAG, "getView: CALLED IN IF");
@@ -64,17 +65,21 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
             Log.d(TAG, "getView: CALLED IN ELSE: " + position);
         }
         // Sets TextViews
-        tvExerciseName = (TextView) row.findViewById(R.id.plan_list_add_edit_exercise);
+        tvExerciseName = (TextView) row.findViewById(R.id.exercise_list_add_edit_exercise);
         tvExerciseName.setText(getItem(position).getName());
 
-        tvSets = (TextView) row.findViewById(R.id.plan_list_sets_text_view);
+        tvSets = (TextView) row.findViewById(R.id.exercise_list_sets_text_view);
         tvSets.setText(String.valueOf(getItem(position).getSets()));
 
-        tvReps = (TextView) row.findViewById(R.id.plan_list_reps_text_view);
+        tvReps = (TextView) row.findViewById(R.id.exercise_list_reps_text_view);
         tvReps.setText(String.valueOf(getItem(position).getReps()));
 
+        tvWeights = (TextView) row.findViewById(R.id.exercise_list_weights_text_view);
+        tvWeights.setText(String.valueOf(getItem(position).getWeights()));
 
-        Button deleteButton = (Button) row.findViewById(R.id.plan_list_delete_button);
+
+        Button deleteButton = (Button) row.findViewById(R.id.exercise_list_delete_button);
+
         if (deleteButton != null) {
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,6 +98,7 @@ public class ExerciseArrayAdapter extends ArrayAdapter<Exercise> {
                             Log.d(TAG, "onClick: reps " + getItem(position).getReps());
                             getItem(position).setSets(0);
                             getItem(position).setReps(0);
+                            getItem(position).setWeights(0);
                             Log.d(TAG, "onClick: reps " + getItem(position).getReps());
                             remove(getItem(position));
 

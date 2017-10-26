@@ -13,11 +13,13 @@ public class Exercise implements Serializable {
     private String name;
     private int sets;
     private int reps;
+    private int weights;
 
     public Exercise( String name) {
         this.name = name;
         this.sets = 0;
         this.reps = 0;
+        this.weights = 0;
     }
 
     public String getName() {
@@ -51,4 +53,13 @@ public class Exercise implements Serializable {
     public void setId(long id) {
         this.m_Id = id;
     }
+
+    public int getWeights() {
+        return weights;
+    }
+
+    public void setWeights(int weights) {
+        this.weights = weights;
+    }
+
 }

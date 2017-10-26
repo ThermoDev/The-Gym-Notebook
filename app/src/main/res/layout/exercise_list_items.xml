@@ -11,7 +11,7 @@
                                              tools:layout_editor_absoluteY="81dp">
 
     <TextView
-        android:id="@+id/plan_list_add_edit_exercise"
+        android:id="@+id/exercise_list_add_edit_exercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -25,54 +25,58 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/plan_list_sets_holder"
+        android:id="@+id/exercise_list_sets_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="21dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="21dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="8dp"
         android:text="Sets:"
-        app:layout_constraintLeft_toRightOf="@+id/plan_list_add_edit_exercise"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_list_add_edit_exercise"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/plan_list_add_edit_exercise"
+        app:layout_constraintBottom_toBottomOf="@+id/exercise_list_add_edit_exercise"
         android:layout_marginBottom="0dp"
-        app:layout_constraintVertical_bias="0.625"/>
+        app:layout_constraintVertical_bias="0.0"/>
 
     <TextView
-        android:id="@+id/plan_list_sets_text_view"
+        android:id="@+id/exercise_list_sets_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="0dp"
         android:maxWidth="30dp"
         android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/plan_list_sets_holder"
-        app:layout_constraintTop_toTopOf="@+id/plan_list_sets_holder"
-        app:layout_constraintBottom_toBottomOf="@+id/plan_list_sets_holder"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_list_sets_holder"
+        app:layout_constraintTop_toTopOf="@+id/exercise_list_sets_holder"
+        app:layout_constraintBottom_toBottomOf="@+id/exercise_list_sets_holder"
         android:layout_marginBottom="0dp"/>
 
     <TextView
-        android:id="@+id/plan_list_reps_holder"
-        android:layout_width="35dp"
+        android:id="@+id/exercise_list_reps_holder"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reps:"
-        app:layout_constraintTop_toTopOf="@+id/plan_list_sets_text_view"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/plan_list_sets_text_view"
         android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/plan_list_sets_text_view"
-        android:layout_marginLeft="24dp"/>
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Reps:"
+        app:layout_constraintBottom_toBottomOf="@+id/exercise_list_sets_text_view"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_list_sets_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"/>
 
     <Button
-        android:id="@+id/plan_list_delete_button"
+        android:id="@+id/exercise_list_delete_button"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:background="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        />
 
     <TextView
-        android:id="@+id/plan_list_reps_text_view"
+        android:id="@+id/exercise_list_reps_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
@@ -80,9 +84,30 @@
         android:layout_marginTop="0dp"
         android:maxWidth="30dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/plan_list_reps_holder"
-        app:layout_constraintLeft_toRightOf="@+id/plan_list_reps_holder"
-        app:layout_constraintTop_toTopOf="@+id/plan_list_reps_holder"
+        app:layout_constraintBottom_toBottomOf="@+id/exercise_list_reps_holder"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_list_reps_holder"
+        app:layout_constraintTop_toTopOf="@+id/exercise_list_reps_holder"
         app:layout_constraintVertical_bias="0.541"/>
+
+    <TextView
+        android:id="@+id/exercise_list_weights_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="8dp"
+        android:text="Weights: "
+        app:layout_constraintTop_toBottomOf="@+id/exercise_list_sets_holder"
+        app:layout_constraintLeft_toLeftOf="@+id/exercise_list_sets_holder"/>
+
+    <TextView
+        android:id="@+id/exercise_list_weights_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:maxWidth="30dp"
+        android:text="TextView"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_list_weights_holder"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_list_reps_holder"/>
 
 </android.support.constraint.ConstraintLayout>

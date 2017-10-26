@@ -20,6 +20,7 @@ public class ExercisesContract {
         public static final String EXERCISES_NAME = "Name";
         public static final String EXERCISES_SETS = "Sets";
         public static final String EXERCISES_REPS = "Reps";
+        public static final String EXERCISES_WEIGHTS = "Weights";
 
         private Columns(){
             // Private Constructor to prevent accidental instantiation :)

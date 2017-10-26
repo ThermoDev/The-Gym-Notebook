@@ -56,7 +56,8 @@ class AppDatabase extends SQLiteOpenHelper {
                 + ExercisesContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, "
                 + ExercisesContract.Columns.EXERCISES_NAME + " TEXT NOT NULL, "
                 + ExercisesContract.Columns.EXERCISES_SETS + " INTEGER, "
-                + ExercisesContract.Columns.EXERCISES_REPS + " INTEGER);";
+                + ExercisesContract.Columns.EXERCISES_REPS + " INTEGER, "
+                + ExercisesContract.Columns.EXERCISES_WEIGHTS + " INTEGER);";
         db.execSQL(sSQL);
 
         sSQL = "CREATE TABLE " + WorkoutsContract.TABLE_NAME + " ("

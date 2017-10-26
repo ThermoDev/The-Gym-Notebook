@@ -82,7 +82,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
         mCalendar = Calendar.getInstance();
 
         // Setting up Adapter
-        mExerciseArrayAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, mExerciseList);
+        mExerciseArrayAdapter = new ExerciseArrayAdapter(getContext(), R.layout.exercise_list_items, mExerciseList);
 
         mListView.setAdapter(mExerciseArrayAdapter);
 
@@ -116,7 +116,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                     Log.d(TAG, "onCreateView: Exercises were found");
                     Log.d(TAG, "onCreateView: " + exercises);
                     String[] projection = {ExercisesContract.Columns._ID, ExercisesContract.Columns.EXERCISES_NAME,
-                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS};
+                        ExercisesContract.Columns.EXERCISES_REPS, ExercisesContract.Columns.EXERCISES_SETS, ExercisesContract.Columns.EXERCISES_WEIGHTS};
 
                     AppProvider appProvider = new AppProvider();
 
@@ -154,6 +154,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                                     Exercise exerciseToAdd = new Exercise(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_NAME)));
                                     exerciseToAdd.setSets(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_SETS))));
                                     exerciseToAdd.setReps(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_REPS))));
+                                    exerciseToAdd.setWeights(Integer.parseInt(exerciseCursor.getString(exerciseCursor.getColumnIndex(ExercisesContract.Columns.EXERCISES_WEIGHTS))));
                                     mExerciseList.add(exerciseToAdd);
                                     mExerciseArrayAdapter.add(exerciseToAdd);
                                 }
@@ -219,14 +220,17 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                             final View view = getActivity().getLayoutInflater().inflate(R.layout.number_picker, container, false);
                             final NumberPicker npSets = (NumberPicker) view.findViewById(R.id.number_picker_sets);
                             final NumberPicker npReps = (NumberPicker) view.findViewById(R.id.number_picker_reps);
+                            final NumberPicker npWeights = (NumberPicker) view.findViewById(R.id.number_picker_weights);
 
                             // Set Min values
                             npSets.setMinValue(0);
                             npReps.setMinValue(0);
+                            npWeights.setMinValue(0);
 
                             // Set Max Values
                             npSets.setMaxValue(50);
                             npReps.setMaxValue(50);
+                            npWeights.setMaxValue(500);
 
                             new AlertDialog.Builder(getActivity())
                                     .setView(view)
@@ -239,8 +243,9 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                                             // Adding values to newExercise object.
                                             newExercise.setSets(npSets.getValue());
                                             newExercise.setReps(npReps.getValue());
+                                            newExercise.setWeights(npWeights.getValue());
 
-                                            //Adding exercise to exerciseList
+                                            //Adding exercise to mExerciseList
                                             mExerciseList.add(newExercise);
                                             mExerciseArrayAdapter.add(newExercise);
                                             mExerciseArrayAdapter.notifyDataSetChanged();
@@ -250,6 +255,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                                                 Log.d(TAG, "onClick: Name - " + ex.getName());
                                                 Log.d(TAG, "onClick: Reps - " + ex.getReps());
                                                 Log.d(TAG, "onClick: Sets - " + ex.getSets());
+                                                Log.d(TAG, "onClick: Weights - " + ex.getWeights());
                                             }
                                         }
                                     })
@@ -275,7 +281,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                 if (!mExerciseList.isEmpty()) {
                     String description = "";
                     for (Exercise ex : mExerciseList) {
-                        description += (ex.getName() + " : " + ex.getSets() + "/" + ex.getReps() + "\n");
+                        description += (ex.getName() + " : " + ex.getSets() + "/" + ex.getReps() + " ("+ ex.getWeights() + ")" + "\n");
                     }
                     workout.setDescription(description);
                 }
@@ -294,6 +300,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName());
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps());
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_WEIGHTS, mExerciseList.get(i).getWeights());
                             // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
                             Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
                             exercisesId += ContentUris.parseId(exerciseUri);
@@ -340,6 +347,7 @@ public class AddEditWorkoutFragment extends Fragment implements DatePickerDialog
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName());
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps());
                             exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets());
+                            exerciseValues.put(ExercisesContract.Columns.EXERCISES_WEIGHTS, mExerciseList.get(i).getWeights());
 
                             Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
                             exercisesId += ContentUris.parseId(exerciseUri);

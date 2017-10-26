@@ -64,5 +64,27 @@
         app:layout_constraintLeft_toLeftOf="@+id/number_reps"
         app:layout_constraintTop_toBottomOf="@+id/number_reps"/>
 
+    <TextView
+        android:id="@+id/number_weights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:text="@string/weights"
+        app:layout_constraintLeft_toRightOf="@+id/number_reps"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toTopOf="@+id/number_reps"/>
+
+    <NumberPicker
+        android:id="@+id/number_picker_weights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/number_weights"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/number_weights"/>
+
 
 </android.support.constraint.ConstraintLayout>

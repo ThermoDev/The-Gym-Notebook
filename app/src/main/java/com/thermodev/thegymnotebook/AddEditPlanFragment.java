@@ -37,7 +37,7 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
     private EditText mNameText;
     private EditText mDescriptionText;
     private ExerciseArrayAdapter mExerciseAdapter;
-    public static ArrayList<Exercise> exerciseList;
+    public static ArrayList<Exercise> mExerciseList;
 
     //TODO: Remove tempWorkoutPlans after a database is implemented.
     public static ArrayList<WorkoutPlan> tempWorkoutPlans = new ArrayList<>();
@@ -68,11 +68,11 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
         mListView = (ListView) view.findViewById(R.id.plan_add_edit_list_view);
         mNameText = (EditText) view.findViewById(R.id.plan_add_edit_name);
         mDescriptionText = (EditText) view.findViewById(R.id.plan_add_edit_description);
-        exerciseList = new ArrayList<>();
+        mExerciseList = new ArrayList<>();
 
 
         //The adapter is created using previous arrays
-        mExerciseAdapter = new ExerciseArrayAdapter(getContext(), R.layout.workout_plan_list_items, exerciseList);
+        mExerciseAdapter = new ExerciseArrayAdapter(getContext(), R.layout.exercise_list_items, mExerciseList);
 
         //Sets the mListView adapter using the ExerciseArrayAdapter class, and appending it to list_items
         mListView.setAdapter(mExerciseAdapter);
@@ -103,14 +103,18 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
                         final View view = getActivity().getLayoutInflater().inflate(R.layout.number_picker, container, false);
                         final NumberPicker npSets = (NumberPicker) view.findViewById(R.id.number_picker_sets);
                         final NumberPicker npReps = (NumberPicker) view.findViewById(R.id.number_picker_reps);
+                        final NumberPicker npWeights = (NumberPicker) view.findViewById(R.id.number_picker_weights);
 
                         // Set Min values
                         npSets.setMinValue(0);
                         npReps.setMinValue(0);
+                        npWeights.setMinValue(0);
 
                         // Set Max Values
                         npSets.setMaxValue(50);
                         npReps.setMaxValue(50);
+                        npWeights.setMaxValue(300);
+
 
                         new AlertDialog.Builder(getActivity())
                                 .setView(view)
@@ -119,9 +123,10 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
                                     public void onClick(DialogInterface dialog, int which) {
                                         newExercise.setSets(npSets.getValue());
                                         newExercise.setReps(npReps.getValue());
+                                        newExercise.setWeights(npWeights.getValue());
 
-                                        //Adding exercise to exerciseList
-                                        exerciseList.add(newExercise);
+                                        //Adding exercise to mExerciseList
+                                        mExerciseList.add(newExercise);
                                         mExerciseAdapter.add(newExercise);
                                         mExerciseAdapter.notifyDataSetChanged();
 
@@ -131,6 +136,7 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
                                             Log.d(TAG, "onClick: Name - " + ex.getName());
                                             Log.d(TAG, "onClick: Reps - " + ex.getReps());
                                             Log.d(TAG, "onClick: Sets - " + ex.getSets());
+                                            Log.d(TAG, "onClick: Weights - " + ex.getWeights());
                                         }
                                     }
                                 })
@@ -153,17 +159,8 @@ public class AddEditPlanFragment extends Fragment implements DatePickerDialog.On
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // mExerciseAdapter and exerciseList should be the same number.
-//                Log.d(TAG, "onClick: " + mExerciseAdapter.getCount());
-//                Log.d(TAG, "onClick: " + exerciseList.size());
-
-String                sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME + "("
-                        + WorkoutPlansContract.Columns._ID + " INTEGER PRIMARY KEY NOT NULL, "
-                        + WorkoutPlansContract.Columns.WORKOUT_NAME + " TEXT NOT NULL, "
-                        + WorkoutPlansContract.Columns.WORKOUT_DESCRIPTION + " TEXT, "
-                        + " FOREIGN KEY (" + WorkoutPlansContract.Columns.WORKOUT_EXERCISES + ") REFERENCES " + ExercisesContract.TABLE_NAME + "("+ ExercisesContract.Columns._ID+ ")" + ");";
-                Log.d(TAG, "onClick: " +sSQL);
-
+                Log.d(TAG, "onClick: Save Button - Starts");
+                // mExerciseAdapter and mExerciseList should be the same number.
 
                 WorkoutPlan workoutPlan = new WorkoutPlan(getId(), mNameText.getText().toString(), mDescriptionText.getText().toString());
 
@@ -176,16 +173,17 @@ String                sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME +
 
                 ContentValues exerciseValues = new ContentValues();
 
-                for (int i = 0; i < exerciseList.size(); i++) {
+                for (int i = 0; i < mExerciseList.size(); i++) {
 
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, exerciseList.get(i).getName());
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, exerciseList.get(i).getReps());
-                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, exerciseList.get(i).getSets());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_NAME, mExerciseList.get(i).getName());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_REPS, mExerciseList.get(i).getReps());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_SETS, mExerciseList.get(i).getSets());
+                    exerciseValues.put(ExercisesContract.Columns.EXERCISES_WEIGHTS, mExerciseList.get(i).getWeights());
                     // Creating an exerciseUri with the returned URI from calling the contentResolver's insert() method.
                     Uri exerciseUri = contentResolver.insert(ExercisesContract.CONTENT_URI, exerciseValues);
                     exercisesId += ContentUris.parseId(exerciseUri);
                     // Adds commas if it is not the last item in the list
-                    if (exerciseList.size() - 1 != i) {
+                    if (mExerciseList.size() - 1 != i) {
                         exercisesId += ",";
                     }
                     exerciseValues.clear();
@@ -204,7 +202,7 @@ String                sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME +
                 Toast.makeText(getContext(), "Successfully added workout plan...", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
 
-//                for(Exercise exercise : exerciseList){
+//                for(Exercise exercise : mExerciseList){
 //                    values.put(ExercisesContract.Columns.EXERCISES_NAME, exercise.getName());
 //                    values.put(ExercisesContract.Columns.EXERCISES_SETS, exercise.getSets());
 //                    values.put(ExercisesContract.Columns.EXERCISES_REPS, exercise.getReps());
@@ -212,13 +210,11 @@ String                sSQL = "CREATE TABLE " + WorkoutPlansContract.TABLE_NAME +
 //                if(!mDescriptionText.equals(null)){
 //                    workoutPlan.setDescription(mDescriptionText.getText().toString());
 //                }
-//                workoutPlan.setExercises(exerciseList);
+//                workoutPlan.setExercises(mExerciseList);
 //
 //                tempWorkoutPlans.add(workoutPlan);
 
 //                contentResolver.insert(WorkoutPlansContract.CONTENT_URI, values);
-
-
 
                 getActivity().finish();
 
