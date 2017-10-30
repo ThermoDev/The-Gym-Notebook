@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity  implements WorkoutRecyclerV
             case R.id.action_add_workout:
                 workoutEditRequest(null);
                 break;
+            case R.id.action_show_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);

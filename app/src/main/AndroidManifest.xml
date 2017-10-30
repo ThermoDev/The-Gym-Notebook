@@ -23,7 +23,7 @@
         <provider
             android:name=".AppProvider"
             android:authorities="com.thermodev.thegymnotebook.provider"
-            android:exported="false" />
+            android:exported="false"/>
 
         <activity
             android:name=".AddEditPlanActivity"
@@ -32,9 +32,8 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thermodev.thegymnotebook.MainActivity" />
+                android:value="com.thermodev.thegymnotebook.MainActivity"/>
         </activity>
-
         <activity
             android:name=".AddEditWorkoutActivity"
             android:label="@string/title_activity_add_edit"
@@ -42,7 +41,9 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thermodev.thegymnotebook.MainActivity" />
+                android:value="com.thermodev.thegymnotebook.MainActivity"/>
+        </activity>
+        <activity android:name=".AboutActivity">
         </activity>
     </application>
 

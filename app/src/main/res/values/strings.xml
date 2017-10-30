@@ -7,6 +7,8 @@
     <string name="addedit_save">Save</string>
     <string name="title_activity_plan_add_edit">Custom Plan</string>
     <string name="title_activity_add_edit">Add/Edit Workout</string>
+    <string name="title_activity_about">About Application</string>
+
     <string name="select_date">Select A Date…</string>
     <string name="no_plans_found">No Plans were found. Please Add a Custom Plan from the Main Menu.</string>
     <string name="no_input_specified">The Exercise Name Cannot be Empty.</string>
@@ -24,5 +26,10 @@
     <string name="deldialog_positive_caption">Delete</string>
     <string name="update_workout_button">Update Workout</string>
     <string name="weights">Weights:</string>
+    <string name="about_welcome">Welcome to The Gym Notebook. This app will keep track of all your exercises which you have completed using an intuitive interface.</string>
+    <string name="about_github">The code for this application can be found on the github page https://github.com/Thermolink/The-Gym-Notebook</string>
+    <string name="about_support_us">It would be greatly appreciated if you could provide feedback for this application. If you wish to support this application, you can contribute directly on the github page!</string>
+    <string name="about_contact">If you have any questions, please ask them on the github page, or email them to mike@thermodev.com</string>
+    <string name="about_copyright">Copyright © 2017 ThermoDev.</string>
 
 </resources>
