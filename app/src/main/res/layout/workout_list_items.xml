@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -14,14 +13,14 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:text="@string/workout_date_placeholder"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/workout_list_edit_button"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Workout Date"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/workout_list_description"
@@ -30,12 +29,12 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:text="@string/description_placeholder"
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/workout_list_edit_button"
-        app:layout_constraintTop_toBottomOf="@+id/workout_list_date"
-        tools:text="This will include the optional Description"/>
+        app:layout_constraintTop_toBottomOf="@+id/workout_list_date"/>
 
 
     <Button
@@ -44,6 +43,7 @@
         android:layout_height="40dp"
         android:layout_marginBottom="0dp"
         android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="0dp"
         android:background="@android:drawable/ic_menu_delete"
         app:layout_constraintBottom_toBottomOf="@+id/workout_list_edit_button"
@@ -57,6 +57,7 @@
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:drawable/ic_menu_edit"
         app:layout_constraintBottom_toBottomOf="@+id/workout_list_description"

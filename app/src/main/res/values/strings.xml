@@ -31,5 +31,17 @@
     <string name="about_support_us">It would be greatly appreciated if you could provide feedback for this application. If you wish to support this application, you can contribute directly on the github page!</string>
     <string name="about_contact">If you have any questions, please ask them on the github page, or email them to mike@thermodev.com</string>
     <string name="about_copyright">Copyright © 2017 ThermoDev.</string>
+    <string name="description_placeholder">This will include the description</string>
+    <string name="workout_date_placeholder">Workout Date</string>
+    <string name="version_number">1.0.0</string>
+    <string name="exercise_name">Exercise Name</string>
+    <string name="exercise_sets">Sets:</string>
+    <string name="number_placeholder">000</string>
+    <string name="exercise_reps">Reps:</string>
+    <string name="exercise_weights">Weights:</string>
+    <string name="select_workout">Select a Workout...</string>
+    <string name="add_new_exercise">Add New Exercise</string>
+    <string name="add_workout">Add Workout</string>
+    <string name="add_exercise">Add Exercise</string>
 
 </resources>
